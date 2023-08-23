@@ -14,12 +14,8 @@ const ListPage = () => {
             <Table 
                 thead={head}
                 tbody={list}
-            >
-                <Table
-                    thead={head}
-                    tbody={list}
-                />
-            </Table>
+                //isChild={true}
+            />
         </div>
     );
 }
