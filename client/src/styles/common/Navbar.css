@@ -1,0 +1,52 @@
+.nav-link:not(.logo) {
+  transition: background-color 0.3s; 
+}
+
+.nav-link:not(.logo):hover {
+  border-radius: 8px;
+  background-color: rgba(255, 255, 255, 0.1); 
+}
+
+.nav-link:not(.logo).active {
+  border-radius: 8px;
+  background-color: rgba(255, 255, 255, 0.2); 
+}
+
+.nav-link.active:not(.logo), .nav-link.active:focus:not(.logo) {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.nav-sub-item {
+  padding-left: 30px;
+  display: inline-block;
+  width: 100%;
+}
+
+.logo-icon {
+  width: 48px;
+}
+
+.logo-icon img {
+  width: 100%;
+}
+
+.logo-text {
+  display: flex;
+  align-items: center;
+  width: 120px;
+}
+
+.logo-text img {
+  width: 100%;
+}
+
+.collapse {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-in-out;
+}
+
+.collapse.show {
+  max-height: 100vh; 
+  transition: max-height 0.5s ease-in-out; 
+}

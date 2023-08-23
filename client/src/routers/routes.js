@@ -1,4 +1,5 @@
 import UnitPrice from '../pages/unitprice/ListPage';
+import Item from '../pages/item/ListPage';
 
 const routes = [
     {
@@ -11,7 +12,7 @@ const routes = [
     },
     {
         path: '/items',
-        component: UnitPrice
+        component: Item
     },
     {
         path: '/boms',

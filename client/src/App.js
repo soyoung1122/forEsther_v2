@@ -5,24 +5,26 @@ import {
 } from "react-router-dom";
 
 import routes from './routers/routes';
+import Layout from "./components/layout/Layout";
 
 function App() {
   return (
     <Router>
-      <h1>home</h1>
-      <Switch>
-        {routes.map((route) => {
-          return (
-            <Route 
-              exact
-              key={route.path}
-              path={route.path}
-              component={route.component}
-            />
-          )
-        })}
-      </Switch>
-    </Router>
+      <Layout>
+        <Switch>
+          {routes.map((route) => {
+            return (
+              <Route 
+                exact
+                key={route.path}
+                path={route.path}
+                component={route.component}
+              />
+            )
+          })}
+        </Switch>
+      </Layout>
+  </Router>
   );
 }
 
