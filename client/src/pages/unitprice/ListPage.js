@@ -1,4 +1,6 @@
-import Select from '../../components/form/Select';
+import PageCard from '../../components/page/PageCard';
+import PageHeader from '../../components/page/PageHeader';
+import PageTitle from '../../components/page/PageTitle';
 import Table from '../../components/table/Table';
 
 import useUnitprices from '../../hooks/useUnitprices';
@@ -9,13 +11,15 @@ const ListPage = () => {
 
     return (
         <div>
-            <h3>unitprice list page</h3>
-            <Select />
-            <Table 
-                thead={head}
-                tbody={list}
-                //isChild={true}
-            />
+            <PageCard>
+                <PageHeader>
+                    <PageTitle value="단가관리" />
+                </PageHeader>
+                <Table 
+                    thead={head}
+                    tbody={list}
+                />
+            </PageCard>
         </div>
     );
 }

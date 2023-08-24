@@ -35,13 +35,13 @@ const Table = ({ thead, tbody, isChild }) => {
                 aria-expanded={activeAccordion === index ? "true" : "false"}
               >
                 {thead.map((th, i) => {
-                  let value =
-                    th.key === "no"
+                  let value = 
+                      th.key === "no"
                       ? index + 1
                       : th.currency
                       ? tr[th.key].toLocaleString()
                       : tr[th.key];
-
+                      
                   return (
                     <td
                       key={i}

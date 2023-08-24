@@ -3,6 +3,7 @@ import axios from "../utils/axios";
 
 const useUnitprices = () => {
   const [list, setList] = useState([]);
+
   const head = [
     {
       key: "no",
@@ -12,7 +13,7 @@ const useUnitprices = () => {
       },
     },
     {
-      key: "sl", //필수
+      key: "serial_lot_code", //필수
       title: "Serial/Lot No", //필수
       currency: false, //선택
       class: [], //선택
@@ -21,17 +22,17 @@ const useUnitprices = () => {
         class: ["b", "bc"],
         link: {
           origin: "/unitprices",
-          id: "sl",
+          id: "item_code",
         },
         onClick: {},
       },
     },
     {
-      key: "pc",
+      key: "item_code",
       title: "품목코드",
     },
     {
-      key: "pn",
+      key: "item_name",
       title: "품목명",
       data: {
         class: ["b", "bc"],
@@ -39,17 +40,17 @@ const useUnitprices = () => {
       },
     },
     {
-      key: "sc",
+      key: "standard_cost",
       title: "표준원가",
       currency: true,
     },
     {
-      key: "pp",
+      key: "purchase_price",
       title: "구매단가",
       currency: true,
     },
     {
-      key: "sp",
+      key: "selling_price",
       title: "판매단가",
       currency: true,
     },
@@ -79,8 +80,20 @@ const useUnitprices = () => {
 
   const getUnitprices = () => {
     axios.get("unitprices").then((res) => {
-      setList([...res.data]);
+      addData(res.data);
     });
+  };
+
+  const addData = (prevList) => {
+    const newList = [];
+
+    prevList.map((data) => {
+      const serialLotVO = data['serialLotVO'];
+      const tempData = {...data, 'item_code': serialLotVO['item_code']}
+      newList.push(tempData);
+    })
+
+    setList([...newList])
   };
 
   return {
