@@ -23,21 +23,21 @@ const Table = ({ thead, tbody, children }) => {
                     {tbody.map((tr, index) => (
                         <React.Fragment key={index}>
                             <tr
-                                className={`accordion-toggle ${
-                                    activeAccordion === index ? '' : 'collapsed'
-                                }`}
-                                onClick={() => {
-                                    if (activeAccordion === index) {
-                                        setActiveAccordion(null);
-                                    } else {
-                                        setActiveAccordion(index);
-                                    }
-                                }}
-                                data-bs-toggle="collapse"
-                                data-bs-target={`#collapse-${index}`}
-                                aria-expanded={
-                                    activeAccordion === index ? "true" : "false"
-                                }
+                                // className={`accordion-toggle ${
+                                //     activeAccordion === index ? '' : 'collapsed'
+                                // }`}
+                                // onClick={() => {
+                                //     if (activeAccordion === index) {
+                                //         setActiveAccordion(null);
+                                //     } else {
+                                //         setActiveAccordion(index);
+                                //     }
+                                // }}
+                                // data-bs-toggle="collapse"
+                                // data-bs-target={`#collapse-${index}`}
+                                // aria-expanded={
+                                //     activeAccordion === index ? "true" : "false"
+                                // }
                             >
                                 {thead.map((th, i) => {
                                     let value =
@@ -59,12 +59,14 @@ const Table = ({ thead, tbody, children }) => {
                                             {th.data && th.data.link ? (
                                                 <a
                                                     href={`${th.data.link.origin}/${tr[th.data.link.id]}`}
+                                                    
                                                 >
                                                     {value}
                                                 </a>
                                             ) : (
                                                 value
                                             )}
+                                            {th.key === 'bom_register_list' ? {} : ('')}
                                         </td>
                                     );
                                 })}
