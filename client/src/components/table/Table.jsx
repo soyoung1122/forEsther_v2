@@ -6,7 +6,6 @@ import Button from "./Button";
 const Table = ({ thead, tbody, isChild }) => {
   // 아코디언 상태를 관리하기 위한 상태 변수
   const [activeAccordion, setActiveAccordion] = useState(null);
-  const [buttonStatus, setButtonStatus] = useState(false);
 
   return (
     <div>
@@ -44,17 +43,16 @@ const Table = ({ thead, tbody, isChild }) => {
                       {
                         th.isToggle 
                         && <Button 
-                            buttonStatus={buttonStatus}
                             className={`accordion-toggle ${
                               activeAccordion === index ? "" : "collapsed"
                             }`}
+                            status={activeAccordion === index ? true : false}
                             onClick={() => {
                               if (activeAccordion === index) {
                                 setActiveAccordion(null);
-                                setButtonStatus(false);
+                                
                               } else {
-                                setActiveAccordion(index);
-                                setButtonStatus(true);
+                                setActiveAccordion(index); 
                               }
                             }}
                             data-bs-toggle="collapse"
