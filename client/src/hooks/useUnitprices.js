@@ -17,6 +17,7 @@ const useUnitprices = () => {
       title: "Serial/Lot No", //필수
       currency: false, //선택
       class: [], //선택
+      isToggle: true,
       data: {
         //선택
         class: ["b", "bc"],
@@ -42,20 +43,33 @@ const useUnitprices = () => {
     {
       key: "standard_cost",
       title: "표준원가",
-      currency: true,
+      isCurrency: true,
     },
     {
       key: "purchase_price",
       title: "구매단가",
-      currency: true,
+      isCurrency: true,
     },
     {
       key: "selling_price",
       title: "판매단가",
-      currency: true,
+      isCurrency: true,
     },
+    {
+      key: "test",
+      title: "test",
+      isArray: true,
+      data: {
+        key: "name"
+      }
+    }
   ];
 
+  const test = [
+    {name: "세진나라"},
+    {name: "세진킹덤"},
+    {name: "(주)세진"},
+  ]
   useEffect(() => {
     getUnitprices();
   }, []);
@@ -89,7 +103,7 @@ const useUnitprices = () => {
 
     prevList.map((data) => {
       const serialLotVO = data['serialLotVO'];
-      const tempData = {...data, 'item_code': serialLotVO['item_code']}
+      const tempData = {...data, 'item_code': serialLotVO['item_code'], 'test': test}
       newList.push(tempData);
     })
 
