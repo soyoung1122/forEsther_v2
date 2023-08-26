@@ -20,16 +20,26 @@ const ListPage = () => {
 
   //테이블 데이터 가공
   useEffect(()=> {
-    const arr = [];
+    const dataList = [];
+    let supplierList = [];
+
     for(let i=0; i<data.length; i++) {
       const {item_code, item_name, item_classification, item_specification, itemsupplier_vo  } = data[i];
-      let company = (itemsupplier_vo[0].supplier_vo !== null) ? (itemsupplier_vo[0].supplier_vo.supplier_name) : '';
-      const newData = {item_code, item_name, item_classification, item_specification, supplier_name: company};
-      arr.push(newData);
+
+      for(let i=0; i<itemsupplier_vo.length; i++) {
+        if(itemsupplier_vo[i].supplier_vo !== null) {
+          supplierList.push({name:  itemsupplier_vo[i].supplier_vo.supplier_name})
+        }
+      }
+
+      const newData = {item_code, item_name, item_classification, item_specification, supplier_name: supplierList};
+      dataList.push(newData);
+      supplierList = []; //리셋
     };
-    setTableBody([...arr]);
+
+    setTableBody([...dataList]);
   }, [data])
- 
+
   const tableHead = [
     { 
       key: 'no',
@@ -59,7 +69,11 @@ const ListPage = () => {
     },
     {
       key: 'supplier_name',
-      title: '구매처명'
+      title: '구매처명',
+      isArray: true,
+      data: {
+        key: "name"
+      }
     }
   ]
 
