@@ -57,7 +57,7 @@ const ListPage = () => {
     },
     { 
       key: 'item_name',
-      title: '품목이름'
+      title: '품목명'
     },
     { 
       key: 'item_classification',
