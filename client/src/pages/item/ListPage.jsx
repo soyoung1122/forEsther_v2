@@ -4,6 +4,7 @@ import PageCard from "../../components/page/PageCard";
 import PageHeader from "../../components/page/PageHeader";
 import PageTitle from "../../components/page/PageTitle";
 import Table from "../../components/table/Table";
+import SearchPanel from "../../components/searchPanel/SearchPanel";
 
 const ListPage = () => {
   const [data, setData] = useState([]);
@@ -82,6 +83,7 @@ const ListPage = () => {
       <PageHeader>
         <PageTitle value="품목관리"/>
       </PageHeader>
+        <SearchPanel />
         <Table thead={tableHead} tbody={tableBody}/>
     </PageCard>
   )
