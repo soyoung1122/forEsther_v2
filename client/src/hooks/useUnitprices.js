@@ -62,6 +62,11 @@ const useUnitprices = () => {
       data: {
         key: "name"
       }
+    },
+    {
+      key: "test2",
+      title: "test2",
+      isBadge: true,
     }
   ];
 
