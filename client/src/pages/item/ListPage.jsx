@@ -23,6 +23,7 @@ const ListPage = () => {
     const arr = [];
     for(let i=0; i<data.length; i++) {
       const {item_code, item_name, item_classification, item_specification, itemsupplier_vo  } = data[i];
+      console.log(itemsupplier_vo);
       let company = (itemsupplier_vo[0].supplier_vo !== null) ? (itemsupplier_vo[0].supplier_vo.supplier_name) : '';
       const newData = {item_code, item_name, item_classification, item_specification, supplier_name: company};
       arr.push(newData);

@@ -86,7 +86,7 @@ const Navbar = () => {
     <nav className="position-fixed col-md-2 d-none d-md-block bg-dark text-white vh-100 ">
       <div className="p-3">
         <h2 className="mt-2 mb-4" >
-          <Link className="nav-link active fw-bold fs-5 d-flex logo" href="#">
+          <Link className="nav-link active fw-bold fs-5 d-flex logo" to="#">
             <div className="logo-icon">
               <img src={LogoIcon} alt="forEsther icon" />
             </div>
