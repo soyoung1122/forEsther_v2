@@ -4,10 +4,42 @@ import Badge from "./Badge";
 import Button from "./Button";
 import DotButton from "./DotButton";
 
-const Table = ({ thead, tbody, isChild }) => {
+const Table = ({ thead, tbody, isChild, cthead }) => {
   // 아코디언 상태를 관리하기 위한 상태 변수
   const [activeAccordion, setActiveAccordion] = useState(null);
+  const [accordionData, setAccordionData] = useState([]);
 
+  const fetchDataForAccordion = async (index) => {
+      const tbody = [
+        {
+          "serial_lot_code" : "s-1111111",
+          "standard_cost" : 11111,
+          "purchase_price" : 33233,
+          "selling_price" : 22222
+        },
+        {
+          "serial_lot_code" : "s-23",
+          "standard_cost" : 11111,
+          "purchase_price" : 33233,
+          "selling_price" : 22222
+        },
+        {
+          "serial_lot_code" : "s-23333",
+          "standard_cost" : 11111,
+          "purchase_price" : 33233,
+          "selling_price" : 22222
+        }
+      ]
+
+    try {
+      //const response = await axios.get("URL_TO_FETCH_DATA");
+      //setAccordionData(response.data); // 가져온 데이터를 상태에 저장
+      setAccordionData(tbody);
+      setActiveAccordion(index); // 아코디언 활성화
+    } catch (error) {
+      console.error("Error fetching accordion data:", error);
+    }
+  };
 
   return (
     <div>
@@ -54,7 +86,7 @@ const Table = ({ thead, tbody, isChild }) => {
                                 setActiveAccordion(null);
                                 
                               } else {
-                                setActiveAccordion(index); 
+                                fetchDataForAccordion(index); 
                               }
                             }}
                             data-bs-toggle="collapse"
@@ -109,7 +141,7 @@ const Table = ({ thead, tbody, isChild }) => {
                     colSpan={thead.length + 1}
                     style={{backgroundColor: "#eee"}}
                   >
-                      <Table thead={thead} tbody={tbody}/></td>
+                      <Table thead={cthead} tbody={accordionData}/></td>
                 </tr>
               )}
             </React.Fragment>

@@ -152,7 +152,7 @@ const useUnitprices = () => {
     head,
     list,
     deleteUnitprice,
-    updateUnitprice,
+    updateUnitprice
   };
 };
 
