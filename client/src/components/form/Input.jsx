@@ -1,10 +1,11 @@
-const Input = ({type, id, placeholder}) => {
+const Input = ({type = "text", id, placeholder, onChange}) => {
   return (
     <input 
       type={type} 
       id={id}
       placeholder={placeholder}
-      class="form-control"/>
+      className="form-control"
+      onChange={onChange}/>
   )
 }
 
