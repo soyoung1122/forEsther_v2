@@ -34,6 +34,15 @@ const ListPage = () => {
       
       const {bom_code, product_name, item_code, item_name, bom_register_vo } = data[i];
       const newData = {bom_code, product_name, item_code, item_name, bom_register_vo};
+      // const itemNameTmp = '';
+      // for(let j=0; j<bom_register_vo.length; j++ ){
+      //   if(itemNameTmp.length < 15){
+      //     itemNameTmp += (bom_register_vo.item_vo + ',');
+      //   } else {
+      //     itemNameTmp += ' ...';
+      //     break;
+      //   }
+      // }
       console.log(bom_register_vo);
       arr.push(newData);
     };
