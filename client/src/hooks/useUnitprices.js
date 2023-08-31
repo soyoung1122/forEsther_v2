@@ -59,17 +59,50 @@ const useUnitprices = () => {
       key: "test",
       title: "test",
       isArray: true,
+      isBadge: true,
       data: {
         key: "name"
       }
+    },
+    {
+      key: "test2",
+      title: "test2",
+      isBadge: true,
+      data: {
+        key: "test2"
+      }
+    },
+    {
+      key: "btn",
+      title: " "
     }
   ];
 
   const test = [
-    {name: "세진나라"},
-    {name: "세진킹덤"},
-    {name: "(주)세진"},
-  ]
+    {name: "세진나라", "color" : "red"},
+    {name: "세진킹덤", "color" : "purple"},
+    {name: "(주)세진", "color" : "green"},
+  ];
+
+  const test2 = {"test2" : "testtest", "color" : "purple"};
+  
+  const btn = [
+    {
+      text: "수정", 
+      onClick: (e) => {
+        console.log("수정")
+        console.log(e)
+      }
+    },
+    {
+      text: "삭제", 
+      onClick: (e) => {
+        console.log("삭제")
+        console.log(e)
+      }
+    },
+  ];
+
   useEffect(() => {
     getUnitprices();
   }, []);
@@ -103,7 +136,12 @@ const useUnitprices = () => {
 
     prevList.map((data) => {
       const serialLotVO = data['serialLotVO'];
-      const tempData = {...data, 'item_code': serialLotVO['item_code'], 'test': test}
+      const tempData = {...data, 
+        'item_code': serialLotVO['item_code'], 
+        'test': test, 
+        "test2" : test2,
+        "btn" : btn
+      }
       newList.push(tempData);
     })
 
@@ -114,7 +152,7 @@ const useUnitprices = () => {
     head,
     list,
     deleteUnitprice,
-    updateUnitprice,
+    updateUnitprice
   };
 };
 
