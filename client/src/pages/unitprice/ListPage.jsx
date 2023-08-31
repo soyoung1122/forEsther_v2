@@ -1,6 +1,7 @@
 import PageCard from "../../components/page/PageCard";
 import PageHeader from "../../components/page/PageHeader";
 import PageTitle from "../../components/page/PageTitle";
+import SearchInput from "../../components/search/SearchInput";
 import Table from "../../components/table/Table";
 
 import useUnitprices from "../../hooks/useUnitprices";
@@ -40,6 +41,7 @@ const ListPage = () => {
       <PageHeader>
         <PageTitle value="단가관리" />
       </PageHeader>
+      <SearchInput />
       <Table 
         thead={head} 
         tbody={list} 
