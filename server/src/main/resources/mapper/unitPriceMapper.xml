@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="com.foresther.www.unitprice.UnitPriceMapper">
+
+	<!-- 단가 sql -->
+
+	<sql id="criteria">
+<!--		<trim suffix="AND">-->
+<!--			<choose>-->
+<!--				<when test="type == 'N'.toString()">-->
+<!--					u.item_name like '%' || #{keyword} || '%'-->
+<!--				</when>-->
+<!--				<when test="type == 'C'.toString()">-->
+<!--					item_code like '%' || #{keyword} || '%'-->
+<!--				</when>-->
+<!--				<when test="type == 'S'.toString()">-->
+<!--					u.serial_lot_code like '%' || #{keyword} || '%'-->
+<!--				</when>-->
+<!--			</choose>-->
+<!--		</trim>-->
+	</sql>
+
+	<!-- 단가 등록 -->
+	<insert id="insert">
+		<selectKey keyProperty="unit_price_code" order="BEFORE"
+			resultType="String">
+			SELECT 'UP-' || lpad(nvl(max(substr(unit_price_code, -2,
+			2)) + 1, 1), 3, '0')
+			FROM tbl_unit_price
+		</selectKey>
+		INSERT INTO tbl_unit_price (
+		UNIT_PRICE_CODE,
+		SERIAL_LOT_CODE,
+		ITEM_NAME,
+		STANDARD_COST,
+		PURCHASE_PRICE,
+		SELLING_PRICE
+		) VALUES(
+		#{unit_price_code},
+		#{serial_lot_code},
+		#{item_name},
+		#{standard_cost},
+		#{purchase_price},
+		#{selling_price}
+		)
+	</insert>
+	<!-- 파일 등록 -->
+	<insert id="insertFile">
+		<selectKey keyProperty="quotation_file_code" order="BEFORE"
+			resultType="String">
+			SELECT 'QF-' || lpad(nvl(max(substr(quotation_file_code,
+			-2,
+			2)) + 1, 1), 3, '0')
+			FROM tbl_quotation_file
+		</selectKey>
+		INSERT INTO tbl_quotation_file(
+		QUOTATION_FILE_CODE,
+		SERIAL_LOT_CODE,
+		FILE_NAME,
+		FILE_PATH,
+		FILE_SIZE,
+		FILE_FORMAT,
+		UPLOAD_DATE
+		) VALUES(
+		#{quotation_file_code},
+		#{serial_lot_code},
+		#{file_name},
+		#{file_path},
+		#{file_size},
+		#{file_format},
+		SYSDATE
+		)
+	</insert>
+	<!-- 단가 조회 -->
+	<select id="read"
+		resultType="UnitPrice">
+		SELECT * FROM tbl_unit_price WHERE unit_price_code =
+		#{unit_price_code}
+	</select>
+	
+	<select id="getThumbnail" resultType="String">
+		SELECT file_name
+		FROM tbl_quotation_file
+		WHERE serial_lot_code = (
+			SELECT serial_lot_code
+            FROM tbl_unit_price WHERE unit_price_code = #{unit_price_code}
+            )
+	</select>
+
+	<!-- 단가 리스트 위한 Map -->
+	<resultMap id="unitpriceMap"
+		type="UnitPrice">
+		<id property="unit_price_code" column="unit_price_code" />
+		<result property="serial_lot_code" column="serial_lot_code" />
+		<result property="item_name" column="item_name" />
+		<result property="standard_cost" column="standard_cost" />
+		<result property="purchase_price" column="purchase_price" />
+		<result property="selling_price" column="selling_price" />
+		<association property="serialLot"
+			column="serial_lot_code"
+			javaType="SerialLot"
+			resultMap="seriallotResult" />
+	</resultMap>
+
+	<resultMap id="seriallotResult"
+		type="SerialLot">
+		<id property="serial_lot_code" column="serial_lot_code" />
+		<result property="item_code" column="item_code" />
+	</resultMap>
+
+	<!-- 단가리스트 조회 -->
+
+	<select id="getList" resultMap="unitpriceMap">
+ 		  <![CDATA[
+	  		SELECT rownum, unit_price_code, serial_lot_code, item_code, item_name, standard_cost, purchase_price, selling_price
+	  		FROM
+	  			(
+				    SELECT
+				         rownum rn, unit_price_code, u.serial_lot_code, item_code, u.item_name, standard_cost, purchase_price, selling_price
+				    FROM
+				        tbl_unit_price u, tbl_serial_lot sl
+				    WHERE u.serial_lot_code = sl.serial_lot_code
+				)
+	  	]]>
+-- 		AND
+<!--		<include refid="criteria"></include>-->
+<!--		<![CDATA[-->
+<!--&#45;&#45; 			rownum <= #{pageNum} * #{amount}-->
+<!--&#45;&#45; 	  			)-->
+<!--&#45;&#45; 	  		where rn > (#{pageNum} - 1) * #{amount}-->
+<!--  		]]>--> -->
+	</select>
+
+	<!-- 차트 데이터 조회-->
+	<select id="getChart" resultType="map">
+		SELECT EXTRACT(MONTH FROM REGISTRATION_DATE) AS month,
+		       AVG(purchase_price) AS mon_avg
+		FROM tbl_serial_lot s, tbl_unit_price u
+		WHERE s.serial_lot_code = u.serial_lot_code
+		    AND s.item_code = #{item_code}
+		    AND EXTRACT(MONTH FROM REGISTRATION_DATE) BETWEEN EXTRACT(MONTH FROM SYSDATE) - 6 AND EXTRACT(MONTH FROM SYSDATE)
+		    AND EXTRACT(YEAR FROM REGISTRATION_DATE) = EXTRACT(YEAR FROM SYSDATE)
+		GROUP BY EXTRACT(MONTH FROM REGISTRATION_DATE)
+		ORDER BY month
+	</select>
+
+	<!-- 조회 건수 조회 -->
+
+	<select id="getTotalCount" resultType="int">
+		<![CDATA[
+			select count(*) from tbl_unit_price u
+			where
+		]]>
+		<include refid="criteria"></include>
+		1 = 1
+	</select>
+
+
+	<!-- 단가 수정 -->
+
+	<update id="update">
+
+
+	</update>
+
+	<!-- 자동 완성 -->
+	<select id="autocomplete" parameterType="map" resultType="map">
+		SELECT
+		sl.SERIAL_LOT_CODE, sl.ITEM_NAME,
+		CASE
+		WHEN up.UNIT_PRICE_CODE IS NULL THEN '미등록'
+		ELSE '등록완료'
+		END AS STATUS
+		FROM tbl_serial_lot sl
+		LEFT JOIN
+		tbl_unit_price up ON sl.SERIAL_LOT_CODE = up.SERIAL_LOT_CODE
+		WHERE
+		sl.SERIAL_LOT_CODE LIKE '%'|| #{value} || '%'
+		ORDER BY sl.ITEM_NAME
+	</select>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
