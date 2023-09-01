@@ -1,4 +1,4 @@
-package com.foresther.controller;
+package com.foresther.www;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -6,9 +6,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 class ServerApplicationTests {
 
-	@Test
-	void contextLoads() {
-		System.out.println("dddd");
-	}
+    @Test
+    void contextLoads() {
+    }
 
 }
