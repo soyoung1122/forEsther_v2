@@ -82,6 +82,34 @@ const ListPage = () => {
     }
   ]
 
+  const cthead = [
+    {
+      key: "no",
+      title: "#",
+      data: {
+        class: ["a", "ab", "ccc"],
+      },
+    },
+    {
+      key: "serial_lot_code", //필수
+      title: "Serial/Lot No", //필수
+    },
+    {
+      key: "standard_cost",
+      title: "표준원가",
+      isCurrency: true,
+    },
+    {
+      key: "purchase_price",
+      title: "구매단가",
+      isCurrency: true,
+    },
+    {
+      key: "selling_price",
+      title: "판매단가",
+      isCurrency: true,
+    }]
+
   return (
     <PageCard>
       <PageHeader>
@@ -126,7 +154,12 @@ const ListPage = () => {
           <Button ButtonId={"btnRegister"} buttonName={"BOM 등록"} />
         </ModalFooter>
       </ModalMain>
-      <Table thead={tableHead} tbody={tableBody}/>
+      <Table 
+        thead={tableHead} 
+        tbody={tableBody}
+        isChild={true}
+        cthead={cthead}  
+      />
       <Pagination />
     </PageCard>
   )
