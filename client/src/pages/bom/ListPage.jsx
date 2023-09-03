@@ -88,19 +88,19 @@ const ListPage = () => {
       key: "no",
       title: "#",
       data: {
-        class: ["a", "ab", "ccc"],
+        class: [""],
       },
     },
     {
-      key: "1", //필수
+      key: "child_item_code", //필수
       title: "자품목 코드", //필수
     },
     {
-      key: "2",
+      key: "child_item_name",
       title: "자품목명",
     },
     {
-      key: "3",
+      key: "required_quantity",
       title: "필요수량",
     }]
 
