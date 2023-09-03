@@ -27,15 +27,20 @@ const ListPage = () => {
   //테이블 데이터 가공
   useEffect(()=> {
     const arr = [];
+    let itemList = [];
     for(let i=0; i<data.length; i++) {
-      // const {item_code, item_name, item_classification, item_specification, itemsupplier_vo  } = data[i];
-      // let company = (itemsupplier_vo[0].supplier_vo !== null) ? (itemsupplier_vo[0].supplier_vo.supplier_name) : '';
-      // const newData = {item_code, item_name, item_classification, item_specification, supplier_name: company};
-      
-      const {bom_code, product_name, item_code, item_name, bom_register_vo } = data[i];
-      const newData = {bom_code, product_name, item_code, item_name, bom_register_vo};
-      console.log(bom_register_vo);
+      const {bom_code, product_name, bom_register_vo } = data[i];
+
+      for(let j = 0; j < bom_register_vo.length; j++) {
+        if(bom_register_vo[j].item_vo !== null){
+          itemList.push({name: bom_register_vo[j].item_vo.item_name});
+        }
+      }
+      const item_code = bom_code.substr(2, 5);
+      const newData = {bom_code, product_name, item_code, item_name: itemList};
       arr.push(newData);
+      itemList = [];
+
     };
     setTableBody([...arr]);
   }, [data])
@@ -53,10 +58,11 @@ const ListPage = () => {
           origin: "/boms",
           id: "bom_code"
         }
-      }
+      },
+      isToggle: true
     },
     { 
-      key: 'bom_code',
+      key: 'item_code',
       title: '모품목코드'
     },
     { 
@@ -64,14 +70,39 @@ const ListPage = () => {
       title: '모품목명'
     },
     {
-      key: 'b',
-      title: '구성품목'
+      key: 'item_name',
+      title: '구성품목',
+      isArray: true,
+      data: {
+        key: "name"
+      }
     },
     {
       key: '',
       title: ''
     }
   ]
+
+  const cthead = [
+    {
+      key: "no",
+      title: "#",
+      data: {
+        class: ["a", "ab", "ccc"],
+      },
+    },
+    {
+      key: "1", //필수
+      title: "자품목 코드", //필수
+    },
+    {
+      key: "2",
+      title: "자품목명",
+    },
+    {
+      key: "3",
+      title: "필요수량",
+    }]
 
   return (
     <PageCard>
@@ -117,7 +148,12 @@ const ListPage = () => {
           <Button ButtonId={"btnRegister"} buttonName={"BOM 등록"} />
         </ModalFooter>
       </ModalMain>
-      <Table thead={tableHead} tbody={tableBody}/>
+      <Table 
+        thead={tableHead} 
+        tbody={tableBody}
+        isChild={true}
+        cthead={cthead}  
+      />
       <Pagination />
     </PageCard>
   )
