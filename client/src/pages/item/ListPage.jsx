@@ -105,10 +105,35 @@ const ListPage = () => {
     readExcel(file);
   };
 
-  //품목구분 드롭다운 
+  //품목구분 드롭다운 이벤트
   const clickItemClassificationBtn = (e) => {
-    console.log(e.target.textContent)
     setSearchData({...searchData, itemClassification: e.target.textContent})
+  }
+
+  //소분류 드롭다운 이벤트
+  const clicksubCategoryBtn = (e) => {
+    setSearchData({...searchData, subCategory: e.target.textContent})
+  }
+
+  //대분류 드롭다운 이벤트
+  const clickmainCategoryBtn = (e) => {
+    setSearchData({...searchData, mainCategory: e.target.textContent})
+  }
+
+  //품목명 이벤트 
+  const changeItemName = (e) => {
+    setSearchData({...searchData, itemName: e.currentTarget.value})
+  }
+
+  //구매처명 이벤트
+  const changeSupplierName = (e) => {
+    setSearchData({...searchData, supplierName: e.currentTarget.value})
+  }
+
+  //검색 버튼 이벤트
+  const clickSearchBtn = (e) => {
+    e.preventDefault();
+    console.log(searchData)
   }
 
   return (
@@ -151,7 +176,13 @@ const ListPage = () => {
       </PageHeader>
         <SearchPanel 
           searchData={searchData}
-          clickItemClassificationBtn={clickItemClassificationBtn}/>
+          clickItemClassificationBtn={clickItemClassificationBtn}
+          clicksubCategoryBtn={clicksubCategoryBtn}
+          clickmainCategoryBtn={clickmainCategoryBtn}
+          changeItemName={changeItemName}
+          changeSupplierName={changeSupplierName}
+          clickSearchBtn={clickSearchBtn}
+          />
         <div >
           <span style={{ fontWeight: 'bold'}}>총 20건</span>
         </div>
