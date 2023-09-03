@@ -10,6 +10,7 @@ const Table = ({ thead, tbody, isChild, cthead }) => {
   const [accordionData, setAccordionData] = useState([]);
 
   const fetchDataForAccordion = async (index) => {
+    // const res = await axios.get('bom/data');
       const tbody = [
         {
           "serial_lot_code" : "s-1111111",

@@ -6,8 +6,8 @@ import org.apache.ibatis.type.Alias;
 import java.util.List;
 
 @Data
-@Alias("Item")
-public class Item {
+//@Alias("ItemVO")
+public class ItemVO {
     private String item_code; // 품목코드
     private String item_name; // 품목명
     private String item_specification; // 규격 (1kg, 10kg, 1box...)
