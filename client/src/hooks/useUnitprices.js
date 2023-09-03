@@ -15,9 +15,6 @@ const useUnitprices = () => {
     {
       key: "serial_lot_code", //필수
       title: "Serial/Lot No", //필수
-      currency: false, //선택
-      class: [], //선택
-      isToggle: true,
       data: {
         //선택
         class: ["b", "bc"],
@@ -56,35 +53,29 @@ const useUnitprices = () => {
       isCurrency: true,
     },
     {
-      key: "test",
-      title: "test",
-      isArray: true,
-      isBadge: true,
-      data: {
-        key: "name"
-      }
-    },
-    {
-      key: "test2",
-      title: "test2",
-      isBadge: true,
-      data: {
-        key: "test2"
-      }
-    },
-    {
       key: "btn",
       title: " "
     }
   ];
 
-  const test = [
-    {name: "세진나라", "color" : "red"},
-    {name: "세진킹덤", "color" : "purple"},
-    {name: "(주)세진", "color" : "green"},
+  const searchLabel = [
+    {
+      "name" : "품목명",
+      "value" : "N"
+    },
+    {
+      "name" : "품목코드",
+      "value" : "C"
+    },
+    {
+      "name" : "S/L",
+      "value" : "S"
+    }
   ];
 
-  const test2 = {"test2" : "testtest", "color" : "purple"};
+  const onLabelClick = (e) => {
+    console.log(e);
+  }
   
   const btn = [
     {
@@ -135,11 +126,9 @@ const useUnitprices = () => {
     const newList = [];
 
     prevList.map((data) => {
-      const serialLotVO = data['serialLotVO'];
+      const serialLotVO = data['serialLot'];
       const tempData = {...data, 
         'item_code': serialLotVO['item_code'], 
-        'test': test, 
-        "test2" : test2,
         "btn" : btn
       }
       newList.push(tempData);
@@ -151,8 +140,10 @@ const useUnitprices = () => {
   return {
     head,
     list,
+    searchLabel,
     deleteUnitprice,
-    updateUnitprice
+    updateUnitprice,
+    onLabelClick
   };
 };
 

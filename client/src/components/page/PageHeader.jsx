@@ -9,7 +9,7 @@ const PageHeader = ({ children}) => {
   }
 
   return (
-    <header style={styles.header}>
+    <header style={styles.header} className="d-flex justify-content-between">
       {children}
     </header>
   )
