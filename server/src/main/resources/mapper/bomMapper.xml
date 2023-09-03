@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+        namespace="com.foresther.www.bom.BomMapper">
+
+    <!-- <select id="getList" resultType="com.forEsther.vo.bomvo.BomVO">
+          select * from tbl_bom
+      </select> -->
+
+
+    <resultMap type="ItemVO" id="ItemVO">
+        <result column="item_name" property="item_name"/>
+        <result column="item_specification" property="item_specification"/>
+    </resultMap>
+
+    <resultMap type="BomRegistrationVO" id="BomRegistrationVO">
+        <result column="bom_registration_code" property="bom_registration_code"/>
+        <result column="bom_code" property="bom_code"/>
+        <result column="item_code" property="item_code"/>
+        <result column="required_quantity" property="required_quantity"/>
+        <collection property="item_vo" resultMap="ItemVO"/>
+    </resultMap>
+
+    <resultMap type="BomVO" id="BomVO">
+        <result column="bom_code" property="bom_code"/>
+        <result column="product_name" property="product_name"/>
+        <collection property="bom_register_vo" resultMap="BomRegistrationVO"/>
+    </resultMap>
+
+    <select id="getList" resultMap="BomVO">
+        select b.bom_code as bom_code, b.product_name as product_name,
+               br.bom_registration_code as bom_registration_code,
+               br.item_code as item_code, i.item_name as item_name,
+               br.required_quantity as required_quantity
+        from tbl_bom_registration br , tbl_bom b , tbl_items i
+        where br.bom_code = b.bom_code and br.item_code = i.item_code
+        ORDER BY bom_registration_code
+    </select>
+
+    <!-- <select id="getListWithPaging" resultMap="BomVO">
+        <![CDATA[
+            select bom_code, product_name, bom_registration_code, item_code, item_name, required_quantity
+      from(
+
+          select rownum as rn, b.bom_code as bom_code, b.product_name as product_name,
+                br.bom_registration_code as bom_registration_code,
+              br.item_code as item_code, i.item_name as item_name,
+              br.required_quantity as required_quantity
+          from tbl_bom_registration br , tbl_bom b , tbl_items i
+              where br.bom_code = b.bom_code and br.item_code = i.item_code and rownum <= #{pageNum} * #{amount}
+          ORDER BY bom_registration_code
+          )
+      where rn > (#{pageNum} - 1) * #{amount}
+
+        ]]>
+    </select> -->
+
+    <select id="getListWithPaging" resultType="BomVO">
+  		<![CDATA[
+        select bom_code, product_name
+        from(
+                select rownum as rn, bom_code, product_name
+                from tbl_bom
+                where rownum <= #{pageNum} * #{amount}
+            )
+        where rn > (#{pageNum} - 1) * #{amount}
+        order by bom_code
+
+        ]]>
+  	</select>
+
+    <select id="getBomRegList" resultMap="BomRegistrationVO">
+        select br.bom_code, br.bom_registration_code, br.item_code, i.item_name, br.required_quantity
+        from tbl_bom_registration br, tbl_items i where i.item_code = br.item_code
+    </select>
+
+    <select id="getTotal" resultType="int">
+        select count(*) from tbl_bom
+    </select>
+
+    <select id="getCount" resultType="int">
+        select count(*) from tbl_bom
+        where product_name like (#{product_name})
+    </select>
+
+    <select id="search" resultMap="BomVO">
+        select b.bom_code, b.product_name, br.bom_registration_code,
+               br.item_code, i.item_name, br.required_quantity
+        from tbl_bom_registration br , tbl_bom b , tbl_items i
+        where br.bom_code = b.bom_code and br.item_code = i.item_code and product_name like (#{product_name})
+        ORDER BY bom_registration_code
+    </select>
+
+    <select id="searchBom" resultType="BomVO">
+  		<![CDATA[
+        select bom_code, product_name
+        from(
+                select rownum as rn, bom_code, product_name
+                from tbl_bom
+                where rownum <= (#{pageNum} * #{amount}) and product_name like (#{product_name})
+            )
+        where rn > (#{pageNum} - 1) * #{amount}
+        order by bom_code
+
+        ]]>
+  	</select>
+
+    <select id="get" resultMap="BomVO">
+        select b.bom_code, b.product_name, br.bom_registration_code,
+               br.item_code, i.item_name, br.required_quantity, i.item_specification
+        from tbl_bom_registration br , tbl_bom b , tbl_items i
+        where br.bom_code = b.bom_code and br.item_code = i.item_code and b.bom_code like (#{bom_code})
+        ORDER BY bom_registration_code
+    </select>
+
+    <select id="getBom" resultType="BomVO">
+        select * from tbl_bom where bom_code = #{bom_code}
+    </select>
+
+    <insert id="insertBomRegistration">
+        insert into tbl_bom_registration (bom_registration_code, bom_code, item_code, required_quantity)
+        values (#{bom_registration_code}, #{bom_code}, #{item_code}, #{required_quantity})
+    </insert>
+
+    <select id="getBomList" resultType="BomVO">
+        select * from tbl_bom
+    </select>
+
+    <insert id="insertBom">
+        insert into tbl_bom (bom_code, product_name)
+        values (#{bom_code}, #{product_name})
+    </insert>
+
+    <delete id="deleteBom">
+        delete from tbl_bom where bom_code = #{bom_code}
+    </delete>
+
+    <delete id="deleteBomToBomRegistration">
+        delete from tbl_bom_registration where bom_code = #{bom_code}
+    </delete>
+
+    <delete id="deleteBomRegistration">
+        delete from tbl_bom_registration where bom_registration_code = #{bom_registration_code}
+    </delete>
+
+    <select id="getBomregCount" resultType="String">
+        select max(bom_registration_code) from tbl_bom_registration
+    </select>
+
+    <select id="getBomItemList" resultType="ItemVO">
+        select * from tbl_items where item_classification = '제품'
+    </select>
+    <select id="getItemList" resultType="ItemVO">
+        select * from tbl_items where item_classification != '제품'
+    </select>
+    <select id="getItem" resultType="ItemVO">
+        select * from tbl_items where item_code = #{item_code}
+    </select>
+    <select id="searchItem" resultType="ItemVO">
+        select * from tbl_items where item_name like (#{item_name}) and item_classification != '제품'
+    </select>
+    <select id="searchProduct" resultType="ItemVO">
+        select * from tbl_items where item_name like (#{item_name}) and item_classification = '제품'
+    </select>
+
+    <select id="getBomRegistration" resultType="BomRegistrationVO">
+        select * from tbl_bom_registration where bom_code = #{bom_code}
+    </select>
+
+    <update id="updateBomRegistration">
+        update tbl_bom_registration set required_quantity = #{required_quantity} where bom_registration_code = #{bom_registration_code}
+    </update>
+
+</mapper>

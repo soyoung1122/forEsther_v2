@@ -58,7 +58,8 @@ const ListPage = () => {
           origin: "/boms",
           id: "bom_code"
         }
-      }
+      },
+      isToggle: true
     },
     { 
       key: 'item_code',
@@ -91,23 +92,16 @@ const ListPage = () => {
       },
     },
     {
-      key: "serial_lot_code", //필수
-      title: "Serial/Lot No", //필수
+      key: "1", //필수
+      title: "자품목 코드", //필수
     },
     {
-      key: "standard_cost",
-      title: "표준원가",
-      isCurrency: true,
+      key: "2",
+      title: "자품목명",
     },
     {
-      key: "purchase_price",
-      title: "구매단가",
-      isCurrency: true,
-    },
-    {
-      key: "selling_price",
-      title: "판매단가",
-      isCurrency: true,
+      key: "3",
+      title: "필요수량",
     }]
 
   return (
