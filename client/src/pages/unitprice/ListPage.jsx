@@ -3,51 +3,46 @@ import PageHeader from "../../components/page/PageHeader";
 import PageTitle from "../../components/page/PageTitle";
 import SearchInput from "../../components/search/SearchInput";
 import Table from "../../components/table/Table";
+import Dropdwon from "../../components/form/Dropdown";
 
 import useUnitprices from "../../hooks/useUnitprices";
+import ModalMain from "../../components/modal/ModalMain";
 
 const ListPage = () => {
-  const { head, list } = useUnitprices();
-  const cthead = [
-    {
-      key: "no",
-      title: "#",
-      data: {
-        class: ["a", "ab", "ccc"],
-      },
-    },
-    {
-      key: "serial_lot_code", //필수
-      title: "Serial/Lot No", //필수
-    },
-    {
-      key: "standard_cost",
-      title: "표준원가",
-      isCurrency: true,
-    },
-    {
-      key: "purchase_price",
-      title: "구매단가",
-      isCurrency: true,
-    },
-    {
-      key: "selling_price",
-      title: "판매단가",
-      isCurrency: true,
-    }]
+  const { head, list, searchLabel, onLabelClick } = useUnitprices();
+
 
   return (
     <PageCard>
       <PageHeader>
         <PageTitle value="단가관리" />
       </PageHeader>
-      <SearchInput />
+      <div style={{
+        display: "flex",
+        justifyContent: "flex-end"
+      }}>
+        <div style={{
+          marginRight: "5px",
+          width: "130px"
+        }}>
+          <Dropdwon 
+            initValue={"품목명"}
+            list={searchLabel}
+            onCLick={onLabelClick}
+            
+          />
+        </div>
+        <div>
+          <SearchInput />
+        </div>
+      </div>
       <Table 
         thead={head} 
-        tbody={list} 
-        isChild={true}
-        cthead={cthead}
+        tbody={list}
       />
+      <ModalMain>
+        
+      </ModalMain>
     </PageCard>
   );
 };
