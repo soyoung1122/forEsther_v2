@@ -1,4 +1,4 @@
-const Label = ({id, value}) => {
+const Label = ({id, value, className}) => {
 
   const styles = {
     ladel: {
@@ -8,7 +8,7 @@ const Label = ({id, value}) => {
   }
 
   return (
-    <label htmlFor={id} class="form-label" style={styles.ladel}>{value}</label>
+    <label htmlFor={id} class="form-label" style={styles.ladel} className={className}>{value}</label>
   )
 }
 
