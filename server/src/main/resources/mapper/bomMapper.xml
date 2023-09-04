@@ -165,9 +165,17 @@
         select * from tbl_items where item_name like (#{item_name}) and item_classification = '제품'
     </select>
 
-    <select id="getBomRegistration" resultType="BomRegistrationVO">
+    <!--<select id="getBomRegistration" resultType="BomRegistrationVO">
         select * from tbl_bom_registration where bom_code = #{bom_code}
+    </select>-->
+
+    <select id="getBomRegistration" resultMap="BomRegistrationVO">
+        select
+            bom_registration_code, bom_code, br.item_code as item_code, required_quantity, item_name, item_specification
+        from tbl_bom_registration br , tbl_items i
+        where br.item_code = i.item_code and bom_code = #{bom_code}
     </select>
+
 
     <update id="updateBomRegistration">
         update tbl_bom_registration set required_quantity = #{required_quantity} where bom_registration_code = #{bom_registration_code}
