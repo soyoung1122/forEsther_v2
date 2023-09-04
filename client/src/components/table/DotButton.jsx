@@ -1,4 +1,4 @@
-const DotButton = ({btns}) => {
+const DotButton = ({btns, value}) => {
 
   return (
     <div className="dropdown">
@@ -25,6 +25,7 @@ const DotButton = ({btns}) => {
             return (
               <li key={index}>
                 <button 
+                  value={value}
                   className="dropdown-item" 
                   type="button"
                   onClick={btn["onClick"]}
