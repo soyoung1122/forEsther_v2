@@ -12,6 +12,8 @@ import ModalBody from "../../components/modal/ModalBody";
 import ModalFooter from "../../components/modal/ModalFooter";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { useLocation } from "react-router-dom/cjs/react-router-dom.min";
+import SearchInput from "../../components/search/SearchInput";
+import Dropdown from "../../components/form/Dropdown";
 
 const ListPage = () => {
   const [data, setData] = useState([]);
@@ -26,10 +28,10 @@ const ListPage = () => {
   //console.log(params.get('page'));
 
   //배열 타입이므로 []
-  const [posts, setPosts] = useState([]);
+  // const [posts, setPosts] = useState([]);
 
   //인터넷이 느릴 경우 로딩되는 중임을 보여주기 위해
-  const [loading, setLoading] = useState(true);
+  // const [loading, setLoading] = useState(true);
 
   //현재 페이지 
   const [currentPage, setCurrentPage] = useState(1);
@@ -87,12 +89,20 @@ const ListPage = () => {
         //총 글 갯수
         // console.log(res);
         // setNumberOfData(res.headers['x-total-count']);
-        setNumberOfData(res.data);
+        setNumberOfData(res.data.length);
         //서버로 부터 넘어온 값은 파라미터로 가져옴 res
-        setData(res.data);
+        const offset = (page-1)*limit;
+        const sliceData = () => {
+          if(res.data){
+            let result = res.data.slice(offset, offset + limit);
+            return result;
+          }
+        }
+        
+        setData(sliceData());
         console.log(res.data);
         //데이터 값 불러왔으면 loading 값 false로
-        setLoading(false);
+        // setLoading(false);
         
     });
     
@@ -120,6 +130,27 @@ const ListPage = () => {
   //   getDate();
   // }, [])
 
+  const btn = [
+    {
+      text: "수정", 
+      onClick: (e) => {
+        console.log("수정")
+        console.log(e)
+      }
+    },
+    {
+      text: "삭제", 
+      onClick: (e) => {
+        console.log("삭제")
+        console.log(e)
+      }
+    },
+  ];
+
+  const onLabelClick = (e) => {
+    console.log(e);
+  }
+
   //테이블 데이터 가공
   useEffect(()=> {
     const arr = [];
@@ -133,7 +164,7 @@ const ListPage = () => {
         }
       }
       const item_code = bom_code.substr(2, 5);
-      const newData = {bom_code, product_name, item_code, item_name: itemList};
+      const newData = {bom_code, product_name, item_code, item_name: itemList, btn};
       arr.push(newData);
       itemList = [];
 
@@ -174,10 +205,13 @@ const ListPage = () => {
       }
     },
     {
-      key: '',
+      key: 'btn',
       title: ''
     }
   ]
+
+  
+
 
   const cthead = [
     {
@@ -200,12 +234,42 @@ const ListPage = () => {
       title: "필요수량",
     }]
 
+    const searchLabel = [
+      {
+        "name" : "품목명",
+        "value" : "N"
+      },
+      {
+        "name" : "품목코드",
+        "value" : "C"
+      },
+    ];
+
   return (
     <PageCard>
       <PageHeader>
         <PageTitle value="BOM관리"/>
         <Button buttonClass={"btn-dark"} dataBsToggle={"modal"} dataBsTarget={"#basicModal"} buttonName="신규등록" />
       </PageHeader>
+      <div style={{
+        display: "flex",
+        justifyContent: "flex-end"
+      }}>
+        <div style={{
+          marginRight: "5px",
+          width: "130px"
+        }}>
+          <Dropdown
+            initValue={"품목명"}
+            list={searchLabel}
+            onCLick={onLabelClick}
+            
+          />
+        </div>
+        <div>
+          <SearchInput />
+        </div>
+      </div>
       <ModalMain>
         <ModalHeader>
         <h5 className="modal-title" id="exampleModalLabel1">BOM 신규 작성</h5>
