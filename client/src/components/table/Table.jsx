@@ -11,7 +11,7 @@ const Table = ({ thead, tbody, isChild, cthead }) => {
   const [accordionData, setAccordionData] = useState([]);
 
   const fetchDataForAccordion = async (index, value) => {
-    const res = await axios.get(`bom/data/${value}`);
+    const res = await axios.get(`boms/data/${value}`);
     
      
     const tbody = [];

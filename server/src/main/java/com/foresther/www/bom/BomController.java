@@ -11,7 +11,7 @@ import java.util.List;
 
 @RestController
 @Log4j2
-@RequestMapping("/bom/*")
+@RequestMapping("/boms/*")
 @AllArgsConstructor
 public class BomController {
     private BomService service;
