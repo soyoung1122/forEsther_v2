@@ -74,7 +74,10 @@ const useUnitprices = ({changeModal}) => {
     },
     {
       key: "btn",
-      title: " "
+      title: " ",
+      data: {
+        btnVal : "serial_lot_code"
+      }
     }
   ];
 
@@ -99,15 +102,13 @@ const useUnitprices = ({changeModal}) => {
     {
       text: "수정", 
       onClick: (e) => {
-        console.log("수정")
-        console.log(e)
+        console.log(e.target.value);
       }
     },
     {
       text: "삭제", 
       onClick: (e) => {
-        console.log("삭제")
-        console.log(e)
+        console.log(e.target.value);
       }
     },
   ];

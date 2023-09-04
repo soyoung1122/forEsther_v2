@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useHistory } from "react-router-dom";
 
 import Dropdown from "../../components/form/Dropdown";
 import Input from "../../components/form/Input";
@@ -9,12 +10,22 @@ import PageHeader from "../../components/page/PageHeader";
 import PageTitle from "../../components/page/PageTitle";
 import Button from "../../components/form/Button";
 import FormGroup from "../../components/form/FormGroup";
+import Autocomplete from "./Autocomplete";
 
 const Register = () => {
   const [selectedVal ,setSelectedVal] = useState("직접입력");
+  const history = useHistory();
 
   const onLabelClick = (e) => {
     setSelectedVal(e.target.textContent);
+  }
+
+  const onCancel = (e) => {
+    history.push("/unitprices");
+  }
+
+  const onSubmit = (e) => {
+    e.preventDefault();
   }
 
   return (
@@ -41,13 +52,13 @@ const Register = () => {
                 id={"sy-sl-autocomplete"}
                 value={"시리얼로트"}
               />
-              <Input 
+              {/* <Input 
                 type={"text"}
                 id={"sy-sl-autocomplete"}
                 placeholder={"예시) RM-002-20231231"}
                 onChange={()=>{}}
-              />
-              
+              /> */}
+              <Autocomplete />
               {/* <input type="text" className="form-control"
                 name="serial_lot_code" id="sy-sl-autocomplete"
                 placeholder="예시) RM-002-20231231"
@@ -274,7 +285,7 @@ const Register = () => {
               <Button 
                 type={"button"}
                 value={"취소"}
-                onClick={() => {}}
+                onClick={onCancel}
                 className={"btn-secondary"}
               />
             </div>
@@ -287,6 +298,8 @@ const Register = () => {
               />
             </div>
           </div>
+          <br />
+          <br />
           </div>
         </form>
     </PageCard>

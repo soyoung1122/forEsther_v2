@@ -139,7 +139,9 @@ const Table = ({ thead, tbody, isChild, cthead }) => {
                             color={value['color'] ? value['color'] : "default"} 
                           />
                         : th.key === "btn"
-                        ? <DotButton btns={value} />
+                        ? <DotButton btns={value} 
+                              value={tr[th.data.btnVal]}
+                        />
                         : value
                       )}
                       
