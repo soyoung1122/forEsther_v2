@@ -15,28 +15,34 @@ const Navbar = () => {
     {
       index: 0,
       mainMenu: "재고관리",
+      path: "/items",
       subMenu: [
         {
           index: 0,
-          menu: "품목 관리"
+          menu: "품목 관리",
+          path: "/items"
         },
         {
           index: 1,
-          menu: "BOM 관리"
+          menu: "BOM 관리",
+          path: "/boms"
         },
         {
           index: 2,
-          menu: "단가 관리"
+          menu: "단가 관리",
+          path: "/unitprices"
         },
         {
           index: 3,
-          menu: "시리얼로트 관리"
+          menu: "시리얼로트 관리",
+          path: "/seriallot"
         },
       ]
     },
     {
       index: 1,
       mainMenu: "생산관리",
+      path: "/items",
       subMenu: [
         {
           index: 0,
@@ -51,6 +57,7 @@ const Navbar = () => {
     {
       index: 2,
       mainMenu: "발주관리",
+      path: "/items",
       subMenu: [
         {
           index: 0,
@@ -102,7 +109,7 @@ const Navbar = () => {
                 <Link 
                   className="nav-link text-white fw-bold mt-1 mb-1" 
                   name={mainMenu.index}
-                  to="#inventoryMenu"
+                  to={mainMenu.path}
                   onClick={showMenuItem}
                 >
                   {mainMenu.mainMenu}
@@ -114,7 +121,7 @@ const Navbar = () => {
                       mainMenu.subMenu.map( subMenu => (
                         <li className="nav-item d-flex justify-content-between" key={subMenu.index}>
                           <Link 
-                            to="#" 
+                            to={subMenu.path}
                             className={`nav-link text-white nav-sub-item d-flex ${activeMenu == subMenu.index ? 'active' : ''}`} 
                             name={subMenu.index}
                             onClick={clickSubMenuItem}
