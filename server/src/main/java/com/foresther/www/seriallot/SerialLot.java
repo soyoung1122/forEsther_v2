@@ -1,6 +1,6 @@
 package com.foresther.www.seriallot;
 
-import com.foresther.www.item.Item;
+import com.foresther.www.item.ItemVO;
 import lombok.Data;
 import org.apache.ibatis.type.Alias;
 
@@ -17,5 +17,5 @@ public class SerialLot {
     private int stock_quantity; // 재고수량
     private String supplier; // 구매처 (-> SupplierVO 객체에서 받아올 예정)
     private String related_invoice; // 연결전표
-    private Item itemVO; // 연결된 객체
+    private ItemVO itemVO; // 연결된 객체
 }

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.foresther.www.item.ItemMapper">
+    <!--  대분류 -->
+    <resultMap id="MainCategoryVO" type="MainCategoryVO">
+        <result column="main_category_code" property="main_category_code" />
+        <result column="main_category_name" property="main_category_name" />
+    </resultMap>
+
+    <!--  소분류  -->
+    <resultMap id="SubCategoryVO" type="SubCategoryVO">
+        <result column="sub_category_code" property="sub_category_code" />
+        <result column="sub_category_name" property="sub_category_name" />
+        <result column="main_category_code" property="main_category_code" />
+        <association property="mainCategory_vo" resultMap="MainCategoryVO">
+            <result column="main_category_name" property="main_category_name" />
+        </association>
+    </resultMap>
+
+    <!--  구매처 VO  -->
+    <resultMap id="SupplierVO" type="SupplierVO">
+        <result column="supplier_code" property="supplier_code" />
+        <result column="supplier_name" property="supplier_name" />
+        <result column="contact_person" property="contact_person" />
+        <result column="contact_number" property="contact_number" />
+        <result column="address" property="address" />
+    </resultMap>
+
+    <!--  품목구매처 VO  -->
+    <resultMap id="ItemSupplierVO" type="ItemSupplierVO">
+        <result column="item_supplier_code" property="item_supplier_code" />
+        <result column="supplier_code" property="supplier_code" />
+        <result column="item_code" property="item_code" />
+        <association property="supplier_vo" javaType="SupplierVO">
+            <result property="supplier_name" column="supplier_name" />
+            <result property="contact_person" column="contact_person" />
+            <result property="contact_number" column="contact_number" />
+            <result property="address" column="address" />
+        </association>
+    </resultMap>
+
+
+    <resultMap id="ItemVO" type="ItemVO">
+        <result column="item_code" property="item_code" />
+        <result column="item_name" property="item_name" />
+        <result column="item_specification" property="item_specification" />
+        <result column="safety_stock" property="safety_stock" />
+        <result column="serial_lot_status" property="serial_lot_status" />
+        <result column="procurement" property="procurement" />
+        <result column="item_classification" property="item_classification" />
+        <collection property="itemSupplier_vo" resultMap="ItemSupplierVO" />
+        <collection property="subCategory_vo" resultMap="SubCategoryVO" />
+    </resultMap>
+
+    <select id="selectItems" resultMap="ItemVO">
+        SELECT DISTINCT
+            i.item_code,
+            i.item_classification,
+            i.item_name,
+            i.item_specification,
+            i.safety_stock,
+            isu.item_supplier_code,
+            su.supplier_name,
+            su.supplier_code,
+            su.contact_person,
+            su.contact_number,
+            su.address,
+            sc.sub_category_code,
+            sc.main_category_code,
+            sc.sub_category_name,
+            mc.main_category_name
+        FROM tbl_items i
+                 LEFT JOIN tbl_item_supplier isu ON i.item_code = isu.item_code
+                 LEFT JOIN tbl_supplier su ON isu.supplier_code = su.supplier_code
+                 LEFT JOIN tbl_sub_category sc ON i.sub_category_code = sc.sub_category_code
+                 LEFT JOIN tbl_main_category mc ON sc.main_category_code = mc.main_category_code
+    </select>
+
+</mapper>
+
+
