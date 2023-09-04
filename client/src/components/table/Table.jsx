@@ -3,34 +3,45 @@ import { Link } from "react-router-dom";
 import Badge from "./Badge";
 import Button from "./Button";
 import DotButton from "./DotButton";
+import axios from "axios";
 
 const Table = ({ thead, tbody, isChild, cthead }) => {
   // 아코디언 상태를 관리하기 위한 상태 변수
   const [activeAccordion, setActiveAccordion] = useState(null);
   const [accordionData, setAccordionData] = useState([]);
 
-  const fetchDataForAccordion = async (index) => {
-    // const res = await axios.get('bom/data');
-      const tbody = [
-        {
-          "serial_lot_code" : "s-1111111",
-          "standard_cost" : 11111,
-          "purchase_price" : 33233,
-          "selling_price" : 22222
-        },
-        {
-          "serial_lot_code" : "s-23",
-          "standard_cost" : 11111,
-          "purchase_price" : 33233,
-          "selling_price" : 22222
-        },
-        {
-          "serial_lot_code" : "s-23333",
-          "standard_cost" : 11111,
-          "purchase_price" : 33233,
-          "selling_price" : 22222
+  const fetchDataForAccordion = async (index, value) => {
+    const res = await axios.get(`bom/data/${value}`);
+    
+     
+    const tbody = [];
+      res.data.map((data) => {
+        console.log(data.item_code);
+        console.log(data.item_vo.item_name);
+        console.log(data.required_quantity);
+        const childItem = {
+          "child_item_code" : data.item_code,
+          "child_item_name" : data.item_vo.item_name,
+          "required_quantity" : data.required_quantity
         }
-      ]
+        tbody.push(childItem);
+      }) 
+        // {
+          
+        //   "child_item_code" : value,
+        //   "child_item_name" : 33233,
+        //   "required_quantity" : 22222
+        // },
+        // {
+        //   "child_item_code" : 11111,
+        //   "child_item_name" : 33233,
+        //   "required_quantity" : 22222
+        // },
+        // {
+        //   "child_item_code" : 11111,
+        //   "child_item_name" : 33233,
+        //   "required_quantity" : 22222
+        // }
 
     try {
       //const response = await axios.get("URL_TO_FETCH_DATA");
@@ -87,7 +98,7 @@ const Table = ({ thead, tbody, isChild, cthead }) => {
                                 setActiveAccordion(null);
                                 
                               } else {
-                                fetchDataForAccordion(index); 
+                                fetchDataForAccordion(index, value); 
                               }
                             }}
                             data-bs-toggle="collapse"
