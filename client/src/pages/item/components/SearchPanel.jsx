@@ -7,10 +7,15 @@ import Button from "../../../components/form/Button";
 
 const SearchPanel = ({
   searchData,
-  clickItemClassificationBtn
+  clickItemClassificationBtn,
+  clicksubCategoryBtn,
+  clickmainCategoryBtn,
+  changeItemName,
+  changeSupplierName,
+  clickSearchBtn
 }) => {
 
-  const {itemClassification, subCategory, mainCategory } = searchData;
+  const {itemClassification, subCategory, mainCategory, itemName, supplierName } = searchData;
 
   const itemClassificationList = [
     {
@@ -66,8 +71,6 @@ const SearchPanel = ({
     },
   ]
 
-  console.log(searchData.itemClassification)
-
   return(
     <section style={{marginBottom: "20px", padding: "20px", borderRadius: "10px", backgroundColor: "#f1f1f1"}}>
       <Form action={``} method={``} submitEvt={()=> console.log('dd')}>
@@ -80,30 +83,30 @@ const SearchPanel = ({
           </div>
           <div className="col">
             <Label id={`subCategory`} value={`소분류`}/>
-            <Dropdown initValue={`소분류`} list={subCategoryList}/>
+            <Dropdown initValue={subCategory} list={subCategoryList} onClick={clicksubCategoryBtn}/>
           </div>
           <div className="col">
           <Label id={`mainCategory`} value={`대분류`}/>
-            <Dropdown initValue={`대분류`} list={mainCategoryList}/>
+            <Dropdown initValue={mainCategory} list={mainCategoryList} onClick={clickmainCategoryBtn}/>
           </div>
         </div>
         <div className="row row-cols-3">
           <div className="col">
             <FormGroup type={'text'}>
               <Label id={`itemName`} value={`품목명`}/>
-              <Input id={`itemName`} type={`text`} placeholder={`품목명을 입력하세요`} onChange={()=> console.log('품목명')}/>
+              <Input value={itemName} id={`itemName`} type={`text`} placeholder={`품목명을 입력하세요`} onChange={changeItemName}/>
             </FormGroup>
           </div>
           <div className="col">
             <FormGroup type={'text'}>
               <Label id={`supplierName`} value={`구매처`}/>
-              <Input id={`supplierName`} type={`text`} placeholder={`구매처명을 입력하세요`} onChange={()=> console.log('구매처명')}/>
+              <Input value={supplierName} id={`supplierName`} type={`text`} placeholder={`구매처명을 입력하세요`} onChange={changeSupplierName}/>
             </FormGroup>
           </div>
         </div>
         <div className="row justify-content-md-center">
           <div style={{marginTop: "40px", width: "200px"}}>
-            <Button type={`submit`} value={`검색`} className={`btn-dark`} onClick={(e)=> e.currentTarget.value}/>
+            <Button type={`submit`} value={`검색`} className={`btn-dark`} onClick={clickSearchBtn}/>
           </div>
         </div>
       </Form>
