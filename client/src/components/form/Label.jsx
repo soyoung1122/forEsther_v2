@@ -6,9 +6,8 @@ const Label = ({id, value, className}) => {
       fontSize: '13px'
     }
   }
-
   return (
-    <label htmlFor={id} class="form-label" style={styles.ladel} className={className}>{value}</label>
+    <label htmlFor={id} style={styles.ladel} className={`form-label ${className}`}>{value}</label>
   )
 }
 
