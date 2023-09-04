@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom/cjs/react-router-dom.min";
+import { Link } from "react-router-dom";
 import axios from "axios";
 
 import readExcel from '../../utils/readExcel';
@@ -13,6 +13,7 @@ import Button from "../../components/button/Button";
 import ModalMain from "../../components/modal/ModalMain";
 import ModalHeader from "../../components/modal/ModalHeader";
 import ModalBody from "../../components/modal/ModalBody";
+import Label from "../../components/form/Label";
 
 
 const ListPage = () => {
@@ -105,53 +106,55 @@ const ListPage = () => {
     readExcel(file);
   };
 
-  //품목구분 드롭다운 
+  //품목구분 드롭다운 이벤트
   const clickItemClassificationBtn = (e) => {
-    console.log(e.target.textContent)
     setSearchData({...searchData, itemClassification: e.target.textContent})
+  }
+
+  //소분류 드롭다운 이벤트
+  const clicksubCategoryBtn = (e) => {
+    setSearchData({...searchData, subCategory: e.target.textContent})
+  }
+
+  //대분류 드롭다운 이벤트
+  const clickmainCategoryBtn = (e) => {
+    setSearchData({...searchData, mainCategory: e.target.textContent})
+  }
+
+  //품목명 이벤트 
+  const changeItemName = (e) => {
+    setSearchData({...searchData, itemName: e.currentTarget.value})
+  }
+
+  //구매처명 이벤트
+  const changeSupplierName = (e) => {
+    setSearchData({...searchData, supplierName: e.currentTarget.value})
+  }
+
+  //검색 버튼 이벤트
+  const clickSearchBtn = (e) => {
+    e.preventDefault();
+    console.log(searchData)
   }
 
   return (
     <PageCard>
       <PageHeader>
-        <PageTitle value="품목관리"/>
+        <PageTitle value="품목 조회"/>
         <div style={{ marginRight: "10px", display: "flex", gap: "8px"}}>
-          <Button dataBsToggle={"modal"} dataBsTarget={"#basicModal"} buttonName="엑셀 등록" buttonClass="btn-dark"/>
-          <Link to="/item/register" className="btn btn-dark">신규 등록</Link>
+          {/* <Button dataBsToggle={"modal"} dataBsTarget={"#basicModal"} buttonName="엑셀 등록" buttonClass="btn-dark"/> */}
+          <Link to="/items/register" className="btn btn-dark">신규 등록</Link>
         </div>
-        {/* <div className="d-flex">
-        
-          <div style={{ marginRight: "10px"}}>
-           
-            <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#exampleModal">
-              엑셀 등록
-            </button>
-       
-            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-              <div class="modal-dialog">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="exampleModalLabel">엑셀 등록</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                  </div>
-                  <div class="modal-body">
-                    <Button type={'button'} value={'엑셀 양식 다운로드'} className={'btn-secondary'}/>
-                    <div class="input-group">
-                      <input type="file" class="form-control" id="inputGroupFile04" aria-describedby="inputGroupFileAddon04" aria-label="Upload"
-                        onChange={handleExcelFileChange}/>
-                      <button class="btn btn-outline-secondary" type="button" id="inputGroupFileAddon04">등록</button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-         
-        </div> */}
       </PageHeader>
         <SearchPanel 
           searchData={searchData}
-          clickItemClassificationBtn={clickItemClassificationBtn}/>
+          clickItemClassificationBtn={clickItemClassificationBtn}
+          clicksubCategoryBtn={clicksubCategoryBtn}
+          clickmainCategoryBtn={clickmainCategoryBtn}
+          changeItemName={changeItemName}
+          changeSupplierName={changeSupplierName}
+          clickSearchBtn={clickSearchBtn}
+          />
         <div >
           <span style={{ fontWeight: 'bold'}}>총 20건</span>
         </div>
@@ -162,14 +165,12 @@ const ListPage = () => {
             <h5 className="modal-title" id="exampleModalLabel1">엑셀 등록</h5>
           </ModalHeader>
           <ModalBody >
-            <div>
-            <Button buttonClass={"btn-secondary w-100"} buttonName={"엑셀 양식 다운로드"} />
-            <Button buttonClass={"btn-secondary w-100"} buttonName={"엑셀 양식 다운로드"} />
-            </div>
-            <div class="input-group">
+            <div style={{ display: "flex", flexDirection: "column", rowGap: "10px"}}>
+              <Button buttonClass={"btn-secondary w-100"} buttonName={"엑셀 양식 다운로드"} />
+              {/* <Button buttonClass={"btn-secondary w-100"} buttonName={"엑셀 가져오기"} /> */}
+              <label className="btn btn-secondary" htmlFor="inputGroupFile04">엑셀 가져오기</label>
               <input type="file" class="form-control" id="inputGroupFile04" aria-describedby="inputGroupFileAddon04" aria-label="Upload"
-                onChange={handleExcelFileChange}/>
-              <button class="btn btn-outline-secondary" type="button" id="inputGroupFileAddon04">등록</button>
+                onChange={handleExcelFileChange} style={{display: 'none'}}/>
             </div>
           </ModalBody>
       </ModalMain>
