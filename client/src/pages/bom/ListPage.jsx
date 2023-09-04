@@ -108,7 +108,7 @@ const ListPage = () => {
     <PageCard>
       <PageHeader>
         <PageTitle value="BOM관리"/>
-        <Button dataBsToggle={"modal"} dataBsTarget={"#basicModal"} buttonName="신규등록" />
+        <Button buttonClass={"btn-dark"} dataBsToggle={"modal"} dataBsTarget={"#basicModal"} buttonName="신규등록" />
       </PageHeader>
       <ModalMain>
         <ModalHeader>
@@ -129,17 +129,17 @@ const ListPage = () => {
                 />
               </div>
               <br/>
-              <label for="item_name" class="form-label">모품목 선택</label>
-              <select class="form-select" id="item_name" aria-label="모품목을 선택해 주세요">
+              <label htmlFor="item_name" className="form-label">모품목 선택</label>
+              <select className="form-select" id="item_name" aria-label="모품목을 선택해 주세요">
  
               </select>
             </div>
           </div>
           <br/>
-          <div class="row g-2">
-            <div class="col mb-0">
-              <label for="product_name" class="form-label">제품명</label>
-              <input type="text" id="product_name" class="form-control" placeholder="BOM 등록할 제품명을 등록하세요." />
+          <div className="row g-2">
+            <div className="col mb-0">
+              <label htmlFor="product_name" className="form-label">제품명</label>
+              <input type="text" id="product_name" className="form-control" placeholder="BOM 등록할 제품명을 등록하세요." />
             </div>
           </div>
         </ModalBody>
