@@ -1,8 +1,21 @@
 import { useEffect, useState } from "react";
 import axios from "../utils/axios";
 
-const useUnitprices = () => {
+const useUnitprices = ({changeModal}) => {
   const [list, setList] = useState([]);
+  
+  const onSLClick = async (e) => {
+    e.preventDefault();
+    const res = await axios(e.target.getAttribute("href"));
+    changeModal("detail");
+  }
+
+  const onIClick = async (e) => {
+    e.preventDefault();
+    const res = await axios(e.target.getAttribute("href")+"chart");
+    changeModal("chart");
+  }
+
 
   const head = [
     {
@@ -15,19 +28,26 @@ const useUnitprices = () => {
     {
       key: "serial_lot_code", //필수
       title: "Serial/Lot No", //필수
+      isModal: true,
       data: {
-        //선택
-        class: ["b", "bc"],
         link: {
-          origin: "/unitprices",
-          id: "item_code",
+          origin: "unitprices",
+          id: "item_code"
         },
-        onClick: {},
+        onClick: onSLClick,
       },
     },
     {
       key: "item_code",
       title: "품목코드",
+      isModal: true,
+      data: {
+        link: {
+          origin: "unitprices",
+          id: "item_code",
+        },
+        onClick: onIClick
+      }
     },
     {
       key: "item_name",
@@ -73,9 +93,7 @@ const useUnitprices = () => {
     }
   ];
 
-  const onLabelClick = (e) => {
-    console.log(e);
-  }
+
   
   const btn = [
     {
@@ -136,14 +154,18 @@ const useUnitprices = () => {
 
     setList([...newList])
   };
+  
+  
+
 
   return {
     head,
     list,
     searchLabel,
+    //selectedVal,
     deleteUnitprice,
     updateUnitprice,
-    onLabelClick
+    //onLabelClick
   };
 };
 

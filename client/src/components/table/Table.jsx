@@ -109,6 +109,9 @@ const Table = ({ thead, tbody, isChild, cthead }) => {
                       {th.data && th.data.link ? (
                         <Link
                           to={`${th.data.link.origin}/${tr[th.data.link.id]}`}
+                          onClick={th.data.onClick}
+                          data-bs-toggle={th.isModal && "modal"} 
+                          data-bs-target={th.isModal && "#basicModal"}
                         >
                           {value}
                         </Link>
