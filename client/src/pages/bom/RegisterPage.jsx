@@ -37,8 +37,6 @@ const ListPage = () => {
   //현재 페이지의 인덱스 시작 숫자
   const [startIndex, setStartIndex] = useState(1);
 
-  const [searchItemText, setSearchItemText] = useState('');
-
   useEffect(() => {
     //무조건 반올림 => 5개씩 출력 될때 14개면 3페이지가 출력 되어야 함
     setNumberOfPages(Math.ceil(numberOfData/limit));
@@ -250,21 +248,10 @@ const ListPage = () => {
           <div className="row g-2">
             <div className="col mb-0">
               <div className="input-group input-group-merge">
-                <span className="input-group-text" id="basic-addon-search31">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
-                    <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
-                  </svg>
-                </span>
-                <input 
-                  type="text" 
-                  class="form-control" 
-                  id="item_name_input"  
-                  placeholder="품목명 검색..." 
-                  aria-label="Search..." 
-                  aria-describedby="basic-addon-search31" 
-                  value={searchItemText}
-                  onChange={(e) => {setSearchItemText(e.target.value)}}
-                />
+                <span className="input-group-text" id="basic-addon-search31"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+  <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+</svg></span>
+                <Input placeholder={"품목명 검색..."} />
               </div>
               <br/>
               <label htmlFor="item_name" className="form-label">모품목 선택</label>
