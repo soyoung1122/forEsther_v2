@@ -9,4 +9,8 @@ public interface ItemService {
     public List<ItemVO> findItems();
 
     public List<ItemVO> findItemBySearch(Map<String, Object> searchCriteria);
+
+    public List<MainCategoryVO> findMainCategories();
+
+    public List<SubCategoryVO> findSubCategories();
 }

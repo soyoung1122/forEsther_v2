@@ -10,4 +10,8 @@ public interface ItemMapper {
     public List<ItemVO> selectItems();
 
     public List<ItemVO> selectItemBySearch(Map<String, Object> searchCriteria);
+
+    public List<MainCategoryVO> selectMainCategories();
+
+    public List<SubCategoryVO> selectSubCategories();
 }
