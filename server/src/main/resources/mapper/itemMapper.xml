@@ -102,7 +102,7 @@
              LEFT JOIN tbl_main_category mc ON sc.main_category_code = mc.main_category_code
         <where>
             <if test="item_classification != null">
-                AND (i.item_classification = #{item_classification} OR #{sub_category_name} IS NULL)
+                AND (i.item_classification = #{item_classification} OR #{item_classification} IS NULL)
             </if>
             <if test="sub_category_name != null">
                 AND (sc.sub_category_name = #{sub_category_name} OR #{sub_category_name} IS NULL)
@@ -117,6 +117,14 @@
                 AND (su.supplier_name LIKE '%' || #{supplier_name} || '%' OR #{supplier_name} IS NULL)
             </if>
         </where>
+    </select>
+    
+    <select id="selectMainCategories" resultMap="MainCategoryVO">
+        SELECT * FROM tbl_main_category
+    </select>
+
+    <select id="selectSubCategories" resultMap="SubCategoryVO">
+        SELECT * FROM tbl_sub_category
     </select>
 
 </mapper>

@@ -19,4 +19,14 @@ public class ItemServiceImpl implements ItemService{
     public List<ItemVO> findItemBySearch(Map<String, Object> searchCriteria) {
         return mapper.selectItemBySearch(searchCriteria);
     }
+
+    @Override
+    public List<MainCategoryVO> findMainCategories() {
+        return mapper.selectMainCategories();
+    }
+
+    @Override
+    public List<SubCategoryVO> findSubCategories() {
+        return mapper.selectSubCategories();
+    }
 }
