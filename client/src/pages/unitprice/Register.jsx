@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 
 import Dropdown from "../../components/form/Dropdown";
@@ -27,8 +27,18 @@ const Register = () => {
     setSelectedVal(e.target.textContent);
   }
 
-  const onSelectRadio = (e) => {
-    setSelectedRadio(e.target.value);
+  useEffect(() => {
+    calSPrice();
+  }, [selectedRadio, margin, sPrice]);
+
+  const calSPrice = () => {
+    let price = 0;
+    if(selectedRadio == "op") {
+      price = sCost;
+    } else if(selectedRadio == "bp") {
+      price = pPrice;
+    }
+    setSPrice(parseInt(price) + parseInt(price * (margin / 100)));
   }
 
   const onCancel = (e) => {
@@ -90,6 +100,7 @@ const Register = () => {
                   type={"text"}
                   id={"sy-cal-op"}
                   placeholder={"예시) 10000"}
+                  value={sCost}
                   onChange={(e)=>{setSCost(e.target.value)}}
                 />
                 
@@ -105,10 +116,12 @@ const Register = () => {
                   id={"sy-op-input"}
                   value={"품목명"}
                 />
-                <Input 
-                  type={"text"}
-                  id={"sy-op-input"}
-                  placeholder={"예시) 김치찌개"}
+                <input
+                  value={itemName}
+                  type="text"
+                  className="form-control"
+                  id="sy-op-input"
+                  placeholder="예시) 김치찌개"
                   onChange={(e)=>{setItemname(e.target.value)}}
                 />
                 
@@ -121,6 +134,7 @@ const Register = () => {
                   value={"구매단가"}
                 />
                 <Input 
+                  value={pPrice}
                   type={"text"}
                   id={"sy-cal-bp"}
                   placeholder={"예시) 10000"}
@@ -141,10 +155,12 @@ const Register = () => {
                       id={"sy-cal-sp"}
                       value={"판매단가"}
                     />
-                    <Input 
-                      type={"text"}
-                      id={"sy-cal-sp"}
-                      placeholder={"예시) 10000"}
+                    <input
+                      value={sPrice}
+                      type="text"
+                      className="form-control"
+                      id="sy-cal-sp"
+                      placeholder="예시) 10000"
                       onChange={(e)=>{setSPrice(e.target.value)}}
                     />
                     </FormGroup>
@@ -193,7 +209,7 @@ const Register = () => {
                       name={"cal-price"}
                       value={"op"}
                       id={"defaultRadio1"}
-                      onChange={onSelectRadio}
+                      onChange={(e) => {setSelectedRadio(e.target.value)}}
                   />
                   <Label 
                     id={"defaultRadio1"}
@@ -210,7 +226,7 @@ const Register = () => {
                       name={"cal-price"}
                       value={"bp"}
                       id={"defaultRadio2"}
-                      onChange={onSelectRadio}
+                      onChange={(e) => {setSelectedRadio(e.target.value)}}
                     />
                     <Label 
                     id={"defaultRadio2"}
@@ -225,6 +241,7 @@ const Register = () => {
                 <div className="col mb-0">
                   <FormGroup>
                   <Input 
+                    value={margin}
                     type={"text"}
                     id={"sy-cal-m"}
                     placeholder={"예시) 10(단위 %)"}
@@ -278,7 +295,7 @@ const Register = () => {
               <Button 
                 type={"submit"}
                 value={"등록"}
-                onClick={() => {}}
+                onClick={onSubmit}
                 className={"btn-primary"}
               />
             </div>
