@@ -19,10 +19,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @RequestMapping("/unitprices")
@@ -117,7 +114,7 @@ public class UnitPriceController {
         return new ResponseEntity<Resource>((Resource) resource, headers, HttpStatus.OK);
     }
 
-    @GetMapping("/getChart/{icode}")
+    @GetMapping("/{icode}/getChart")
     public Map<String, Object> getChart(@PathVariable("icode") String item_code) {
         log.info("getChart=========================================");
 
@@ -128,16 +125,16 @@ public class UnitPriceController {
         return result;
     }
 
-    @PostMapping("/register")
-    public String register(MultipartFile uploadFile, UnitPrice unitPrice, RedirectAttributes rttr) {
+    @PostMapping()
+    public void register(@RequestParam("uploadFile") MultipartFile uploadFile, UnitPrice unitPrice) {
+        log.info(uploadFile);
         if (!uploadFile.isEmpty()) {
-
-            String path = makepath();
+            String path = "C:\\test"; // 파일 저장 경로를 C 드라이브의 test 폴더로 설정
 
             log.info("path=========================================");
             log.info(path);
 
-            File saveFile = new File(path, uploadFile.getOriginalFilename());
+            File saveFile = new File(path, Objects.requireNonNull(uploadFile.getOriginalFilename()));
 
             try {
                 uploadFile.transferTo(saveFile);
@@ -145,7 +142,7 @@ public class UnitPriceController {
                 e.printStackTrace();
                 throw new RuntimeException(e);
             }
-
+            log.info(unitPrice);
             QuotationFile file = new QuotationFile();
 
             file.setSerial_lot_code(unitPrice.getSerial_lot_code());
@@ -155,18 +152,19 @@ public class UnitPriceController {
             file.setFile_path(path);
 
             if (service.registerWithFile(unitPrice, file) == 0) {
-                log.info(saveFile.delete());
+                //log.info(saveFile.delete());
             } else {
                 log.info(file);
             }
-
         } else {
             log.info("no file");
+            // 파일이 업로드되지 않은 경우에도 서비스에 unitPrice 전달
             service.register(unitPrice);
         }
-
-        return "redirect:/unitPrice/unitPriceList";
+        log.info("Ddddd");
     }
+
+
 
     @PostMapping("/autocomplete")
     public @ResponseBody Map<String, Object> autocomplete(@RequestParam Map<String, Object> paramMap) {

@@ -76,7 +76,7 @@ const useUnitprices = ({changeModal}) => {
       key: "btn",
       title: " ",
       data: {
-        btnVal : "serial_lot_code"
+        btnVal : "item_code"
       }
     }
   ];
