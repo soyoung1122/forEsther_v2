@@ -12,10 +12,11 @@ const SearchPanel = ({
   clickmainCategoryBtn,
   changeItemName,
   changeSupplierName,
-  clickSearchBtn
+  clickSearchBtn,
+  clickResetBtn
 }) => {
 
-  const {itemClassification, subCategory, mainCategory, itemName, supplierName } = searchData;
+  const {item_classification, sub_category_name, main_category_name, item_name, supplier_name } = searchData;
 
   const itemClassificationList = [
     {
@@ -66,45 +67,48 @@ const SearchPanel = ({
     },
     {
       idx: 3,
-      name: '신선식품',
+      name: '가공식품',
       value: 3
     },
   ]
 
   return(
     <section style={{marginBottom: "20px", padding: "20px", borderRadius: "10px", backgroundColor: "#f1f1f1"}}>
-      <Form action={``} method={``} submitEvt={()=> console.log('dd')}>
+      <Form>
         <div className="row" style={{marginBottom: "18px"}}>
           <div className="col">
             <FormGroup type={'text'}>
             <Label id={`itemClassification`} value={`품목구분`}/>
-            <Dropdown initValue={itemClassification} list={itemClassificationList} onClick={clickItemClassificationBtn}/>
+            <Dropdown initValue={item_classification} list={itemClassificationList} onClick={clickItemClassificationBtn}/>
             </FormGroup>
           </div>
           <div className="col">
             <Label id={`subCategory`} value={`소분류`}/>
-            <Dropdown initValue={subCategory} list={subCategoryList} onClick={clicksubCategoryBtn}/>
+            <Dropdown initValue={sub_category_name} list={subCategoryList} onClick={clicksubCategoryBtn}/>
           </div>
           <div className="col">
           <Label id={`mainCategory`} value={`대분류`}/>
-            <Dropdown initValue={mainCategory} list={mainCategoryList} onClick={clickmainCategoryBtn}/>
+            <Dropdown initValue={main_category_name} list={mainCategoryList} onClick={clickmainCategoryBtn}/>
           </div>
         </div>
         <div className="row row-cols-3">
           <div className="col">
             <FormGroup type={'text'}>
               <Label id={`itemName`} value={`품목명`}/>
-              <Input value={itemName} id={`itemName`} type={`text`} placeholder={`품목명을 입력하세요`} onChange={changeItemName}/>
+              <Input value={item_name} id={`itemName`} type={`text`} placeholder={`품목명을 입력하세요`} onChange={changeItemName}/>
             </FormGroup>
           </div>
           <div className="col">
             <FormGroup type={'text'}>
               <Label id={`supplierName`} value={`구매처`}/>
-              <Input value={supplierName} id={`supplierName`} type={`text`} placeholder={`구매처명을 입력하세요`} onChange={changeSupplierName}/>
+              <Input value={supplier_name} id={`supplierName`} type={`text`} placeholder={`구매처명을 입력하세요`} onChange={changeSupplierName}/>
             </FormGroup>
           </div>
         </div>
         <div className="row justify-content-md-center">
+          <div style={{marginTop: "40px", width: "200px"}}>
+            <Button type={`button`} value={`초기화`} className={`btn-secondary`} onClick={clickResetBtn}/>
+          </div>
           <div style={{marginTop: "40px", width: "200px"}}>
             <Button type={`submit`} value={`검색`} className={`btn-dark`} onClick={clickSearchBtn}/>
           </div>
