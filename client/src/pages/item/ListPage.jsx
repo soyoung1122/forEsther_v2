@@ -20,11 +20,11 @@ const ListPage = () => {
   const [data, setData] = useState([]);
   const [tableBody, setTableBody] = useState([]);
   const [searchData, setSearchData] = useState({
-    itemClassification: '품목구분',
-    subCategory: '소분류',
-    mainCategory: '대분류',
-    itemName: '',
-    supplierName: ''
+    item_classification: '품목구분',
+    sub_category_name: '소분류',
+    main_category_name: '대분류',
+    item_name: '',
+    supplier_name: ''
   })
 
   //서버 데이터 요청
@@ -85,7 +85,7 @@ const ListPage = () => {
           {
             text: "수정", 
             onClick: (e) => {
-              console.log(e.target)
+              console.log(e.target.value)
             }
           },
           {
@@ -161,7 +161,10 @@ const ListPage = () => {
     },
     {
       key: "btn",
-      title: " "
+      title: " ",
+      data: {
+        btnVal: 'item_code'
+      }
     }
   ]
 
@@ -174,33 +177,62 @@ const ListPage = () => {
 
   //품목구분 드롭다운 이벤트
   const clickItemClassificationBtn = (e) => {
-    setSearchData({...searchData, itemClassification: e.target.textContent})
+    setSearchData({...searchData, item_classification: e.target.textContent})
   }
 
   //소분류 드롭다운 이벤트
   const clicksubCategoryBtn = (e) => {
-    setSearchData({...searchData, subCategory: e.target.textContent})
+    setSearchData({...searchData, sub_category_name: e.target.textContent})
   }
 
   //대분류 드롭다운 이벤트
   const clickmainCategoryBtn = (e) => {
-    setSearchData({...searchData, mainCategory: e.target.textContent})
+    setSearchData({...searchData, main_category_name: e.target.textContent})
   }
 
   //품목명 이벤트 
   const changeItemName = (e) => {
-    setSearchData({...searchData, itemName: e.currentTarget.value})
+    setSearchData({...searchData, item_name: e.currentTarget.value})
   }
 
   //구매처명 이벤트
   const changeSupplierName = (e) => {
-    setSearchData({...searchData, supplierName: e.currentTarget.value})
+    setSearchData({...searchData, supplier_name: e.currentTarget.value})
+  }
+
+  //초기화 버튼 이벤트
+  const clickResetBtn = (e) => {
+    const newData = {...searchData};
+
+    newData.item_classification = '품목구분';
+    newData.main_category_name = '대분류';
+    newData.sub_category_name = '소분류';
+    newData.item_name = '';
+    newData.supplier_name = '';
+
+    setSearchData(newData);
+
   }
 
   //검색 버튼 이벤트
-  const clickSearchBtn = (e) => {
+  const clickSearchBtn = async (e) => {
     e.preventDefault();
-    console.log(searchData)
+    const newData = {...searchData};
+
+    if(newData.item_classification == '품목구분') {
+      newData.item_classification = '';
+    }
+
+    if(newData.main_category_name == '대분류') {
+      newData.main_category_name = '';
+    }
+
+    if(newData.sub_category_name == '소분류') {
+      newData.sub_category_name = '';
+    }
+
+    const res = await axios.post(`/items/search`, newData);
+    setData(res.data);
   }
 
   return (
@@ -220,6 +252,7 @@ const ListPage = () => {
           changeItemName={changeItemName}
           changeSupplierName={changeSupplierName}
           clickSearchBtn={clickSearchBtn}
+          clickResetBtn={clickResetBtn}
           />
         <div >
           <span style={{ fontWeight: 'bold'}}>총 20건</span>
