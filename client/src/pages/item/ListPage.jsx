@@ -30,30 +30,79 @@ const ListPage = () => {
   //서버 데이터 요청
   useEffect(()=> {
     const getDate = async () => {
-      const res = await axios.get('item/data');
+      const res = await axios.get('/items');
       setData(res.data);
     }
     getDate();
   }, [])
 
-  //테이블 데이터 가공
+  //테이블 바디 데이터 가공
   useEffect(()=> {
     const dataList = [];
     let supplierList = [];
 
     for(let i=0; i<data.length; i++) {
-      const {item_code, item_name, item_classification, item_specification, itemsupplier_vo  } = data[i];
+      let itemClassification = {
+        name: '',
+        color: ''
+      }
+  
+      const {item_code, item_name, item_classification, item_specification, itemSupplier_vo, subCategory_vo  } = data[i];
 
-      for(let i=0; i<itemsupplier_vo.length; i++) {
-        if(itemsupplier_vo[i].supplier_vo !== null) {
+      for(let i=0; i<itemSupplier_vo.length; i++) {
+        if(itemSupplier_vo[i].supplier_vo !== null) {
           supplierList.push({
-            name:  itemsupplier_vo[i].supplier_vo.supplier_name,
+            name:  itemSupplier_vo[i].supplier_vo.supplier_name,
             color: "default"
           })
         }
       }
 
-      const newData = {item_code, item_name, item_classification, item_specification, supplier_name: supplierList};
+      itemClassification.name = item_classification;
+      switch(item_classification) {
+        case "원재료":
+          itemClassification.color = 'red';
+          break;
+        case "제품":
+          itemClassification.color = 'blue';
+          break;
+        case "상품":
+          itemClassification.color = 'purple';
+          break;
+        default:
+          break;
+      }
+
+      const newData = {
+        item_code, 
+        item_name, 
+        item_classificationsss: itemClassification,
+        item_specification, 
+        sub_category_name: subCategory_vo[0].sub_category_name,
+        main_category_name: subCategory_vo[0].mainCategory_vo.main_category_name,
+        supplier_name: supplierList,
+        btn: [
+          {
+            text: "수정", 
+            onClick: (e) => {
+              console.log(e.target)
+            }
+          },
+          {
+            text: "삭제", 
+            onClick: (e) => {
+              console.log("삭제")
+            }
+          },
+          {
+            text: "복사", 
+            onClick: (e) => {
+              console.log("복사")
+            }
+          },
+        ]
+      };
+
       dataList.push(newData);
       supplierList = []; //리셋
     };
@@ -61,6 +110,7 @@ const ListPage = () => {
     setTableBody([...dataList]);
   }, [data])
 
+  //테이블 헤더 데이터
   const tableHead = [
     { 
       key: 'no',
@@ -71,7 +121,7 @@ const ListPage = () => {
       title: '품목코드',
       data: {
         link: {
-          origin: "/item",
+          origin: "/items",
           id: "item_code"
         }
       }
@@ -81,12 +131,24 @@ const ListPage = () => {
       title: '품목명'
     },
     { 
-      key: 'item_classification',
-      title: '품목구분'
+      key: 'item_classificationsss',
+      title: '품목구분',
+      isBadge: true,
+      data: {
+        key: "name"
+      }
     },
     {
       key: 'item_specification',
       title: '규격'
+    },
+    {
+      key: 'sub_category_name',
+      title: '소분류명'
+    },
+    {
+      key: 'main_category_name',
+      title: '대분류명'
     },
     {
       key: 'supplier_name',
@@ -96,6 +158,10 @@ const ListPage = () => {
       data: {
         key: "name"
       }
+    },
+    {
+      key: "btn",
+      title: " "
     }
   ]
 
@@ -169,7 +235,7 @@ const ListPage = () => {
               <Button buttonClass={"btn-secondary w-100"} buttonName={"엑셀 양식 다운로드"} />
               {/* <Button buttonClass={"btn-secondary w-100"} buttonName={"엑셀 가져오기"} /> */}
               <label className="btn btn-secondary" htmlFor="inputGroupFile04">엑셀 가져오기</label>
-              <input type="file" class="form-control" id="inputGroupFile04" aria-describedby="inputGroupFileAddon04" aria-label="Upload"
+              <input type="file" className="form-control" id="inputGroupFile04" aria-describedby="inputGroupFileAddon04" aria-label="Upload"
                 onChange={handleExcelFileChange} style={{display: 'none'}}/>
             </div>
           </ModalBody>

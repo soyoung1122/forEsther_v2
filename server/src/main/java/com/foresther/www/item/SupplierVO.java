@@ -4,7 +4,7 @@ import lombok.Data;
 import org.apache.ibatis.type.Alias;
 
 @Data
-//@Alias("SupplierVO")
+@Alias("SupplierVO")
 public class SupplierVO {
     private String supplier_code; //구매처코드 PK
     private String supplier_name; //회사명
