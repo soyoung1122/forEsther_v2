@@ -1,18 +1,17 @@
 import React, { useState, useEffect } from 'react';
+import "../../styles/unitprices/Unitprice.css";
 
-function Autocomplete() {
+function Autocomplete({ onClick, value }) {
   const [term, setTerm] = useState('');
   const [results, setResults] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     if (term.length < 2) {
+      setIsOpen(false); // 검색어가 2자 이하일 때 드롭다운 닫기
       return;
     }
 
-    // AJAX 요청 대신 비동기 함수를 호출하여 데이터를 가져옵니다.
-    // 예를 들어, fetch 또는 axios를 사용하여 서버에서 데이터를 가져올 수 있습니다.
-    // 아래 예제는 가짜 데이터를 사용한 예시입니다.
     const fetchData = async () => {
       try {
         const response = await fetch(`/unitprices/autocomplete?value=${term}`, {
@@ -37,7 +36,7 @@ function Autocomplete() {
         }));
 
         setResults(formattedResults);
-        setIsOpen(true);
+        setIsOpen(true); // 검색 결과가 있을 때 드롭다운 열기
       } catch (error) {
         console.error(error.message);
       }
@@ -47,33 +46,38 @@ function Autocomplete() {
   }, [term]);
 
   const handleSelect = (selectedItem) => {
-    console.log(selectedItem.item);
-    // 선택한 항목을 처리하거나 다른 작업을 수행합니다.
-    // 예를 들어, state를 업데이트하거나 다른 동작을 수행할 수 있습니다.
+    onClick(selectedItem);
+    setTerm(selectedItem.value); // 선택한 항목의 값을 인풋창에 입력
     setIsOpen(false); // 항목 선택 후 드롭다운 닫기
+  };
+
+  const handleInputChange = (e) => {
+    setTerm(e.target.value);
+    setIsOpen(false); // 입력이 변경되면 드롭다운 닫기
   };
 
   return (
     <div className="autocomplete-container">
       <input
+        className='form-control'
         type="text"
         value={term}
-        onChange={(e) => setTerm(e.target.value)}
+        onChange={handleInputChange}
         minLength={2}
         autoFocus={true}
-        placeholder="검색어 입력"
+        placeholder=""
       />
       {isOpen && (
-        <div className="dropdown">
+        <div className="dropdown autocomplete">
           {results.map((item) => (
             <div
               key={item.value}
-              className="dropdown-item"
+              className="dropdown-item autocomplete-item"
               onClick={() => handleSelect(item)}
             >
-              <span>{item.label}</span>
+              <span className=''>{item.label}</span>
               <span className="sy-item">{item.item}</span>
-              <span className={`sy-status badge bg-label-${item.status === '미등록' ? 'secondary' : 'info'}`}>
+              <span className={`sy-status badge text-bg-${item.status == '미등록' ? 'secondary' : 'success'}`}>
                 {item.status}
               </span>
             </div>

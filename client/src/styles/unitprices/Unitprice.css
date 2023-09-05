@@ -1,0 +1,32 @@
+.autocomplete {
+  padding-left: 20px;
+  padding-right: 20px;
+  overflow: scroll;
+  z-index: 2;
+  position: absolute;
+  background: white;
+  height: 300px;
+  width: 560px;
+}
+
+.autocomplete-item:hover {
+  background-color: rgb(141, 225, 190); /* 마우스를 올렸을 때 배경색 */
+}
+
+.autocomplete::-webkit-scrollbar {
+  width: 0; /* 웹킷 브라우저(Chrome, Safari 등)의 스크롤바를 가립니다. */
+  display: none; /* 파이어폭스(Firefox)의 스크롤바를 가립니다. */
+}
+
+.autocomplete-item {
+  display: flex;
+  justify-content: space-between;
+}
+
+.sy-status {
+	margin: 1px;
+	margin-right: 3px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
