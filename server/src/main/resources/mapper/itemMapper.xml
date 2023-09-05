@@ -78,6 +78,47 @@
                  LEFT JOIN tbl_main_category mc ON sc.main_category_code = mc.main_category_code
     </select>
 
+    <select id="selectItemBySearch" resultMap="ItemVO">
+        SELECT DISTINCT
+            i.item_code,
+            i.item_classification,
+            i.item_name,
+            i.item_specification,
+            i.safety_stock,
+            isu.item_supplier_code,
+            su.supplier_name,
+            su.supplier_code,
+            su.contact_person,
+            su.contact_number,
+            su.address,
+            sc.sub_category_code,
+            sc.main_category_code,
+            sc.sub_category_name,
+            mc.main_category_name
+        FROM tbl_items i
+             LEFT JOIN tbl_item_supplier isu ON i.item_code = isu.item_code
+             LEFT JOIN tbl_supplier su ON isu.supplier_code = su.supplier_code
+             LEFT JOIN tbl_sub_category sc ON i.sub_category_code = sc.sub_category_code
+             LEFT JOIN tbl_main_category mc ON sc.main_category_code = mc.main_category_code
+        <where>
+            <if test="item_classification != null">
+                AND (i.item_classification = #{item_classification} OR #{sub_category_name} IS NULL)
+            </if>
+            <if test="sub_category_name != null">
+                AND (sc.sub_category_name = #{sub_category_name} OR #{sub_category_name} IS NULL)
+            </if>
+            <if test="main_category_name != null">
+                AND (mc.main_category_name = #{main_category_name} OR #{main_category_name} IS NULL)
+            </if>
+            <if test="item_name != null">
+                AND (i.item_name LIKE '%' || #{item_name} || '%' OR #{item_name} IS NULL)
+            </if>
+            <if test="supplier_name != null">
+                AND (su.supplier_name LIKE '%' || #{supplier_name} || '%' OR #{supplier_name} IS NULL)
+            </if>
+        </where>
+    </select>
+
 </mapper>
 
 
