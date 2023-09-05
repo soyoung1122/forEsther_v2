@@ -1,8 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useReducer } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
-
-import readExcel from '../../utils/readExcel';
 
 import PageCard from "../../components/page/PageCard";
 import PageHeader from "../../components/page/PageHeader";
@@ -13,12 +11,15 @@ import Button from "../../components/button/Button";
 import ModalMain from "../../components/modal/ModalMain";
 import ModalHeader from "../../components/modal/ModalHeader";
 import ModalBody from "../../components/modal/ModalBody";
-import Label from "../../components/form/Label";
 
 
 const ListPage = () => {
   const [data, setData] = useState([]);
   const [tableBody, setTableBody] = useState([]);
+  const [categoryInfo, setCategoryInfo] = useState({
+    mainCategory: [],
+    subCategory: []
+  });
   const [searchData, setSearchData] = useState({
     item_classification: '품목구분',
     sub_category_name: '소분류',
@@ -30,8 +31,24 @@ const ListPage = () => {
   //서버 데이터 요청
   useEffect(()=> {
     const getDate = async () => {
-      const res = await axios.get('/items');
-      setData(res.data);
+      //품목 데이터 요청
+      const resItem = await axios.get('/items');
+      setData(resItem.data);
+
+      //품목 분류 데이터 요청
+      const resCat = await axios.get('/items/category');
+
+      //드롭다운 컴포넌트에 맞춰 데이터 가공
+      const mainArr= [];
+      const subArr = [];
+      resCat.data.mainCategory.forEach(item => {
+        mainArr.push({ idx: item.main_category_code, name: item.main_category_name, value:  item.main_category_name });
+      })
+      resCat.data.subCategory.forEach(item => {
+        subArr.push({ idx: item.sub_category_code, name: item.sub_category_name, value:  item.sub_category_name });
+      })
+
+      setCategoryInfo({ mainCategory: mainArr, subCategory: subArr});
     }
     getDate();
   }, [])
@@ -40,6 +57,8 @@ const ListPage = () => {
   useEffect(()=> {
     const dataList = [];
     let supplierList = [];
+
+
 
     for(let i=0; i<data.length; i++) {
       let itemClassification = {
@@ -107,6 +126,7 @@ const ListPage = () => {
       supplierList = []; //리셋
     };
 
+    console.log(dataList)
     setTableBody([...dataList]);
   }, [data])
 
@@ -168,12 +188,7 @@ const ListPage = () => {
     }
   ]
 
-  //엑셀 가져오기 버튼 이벤트
-  const handleExcelFileChange = (e) => {
-    if (!e.target.files) return;
-    const file = e.target.files[0];
-    readExcel(file);
-  };
+
 
   //품목구분 드롭다운 이벤트
   const clickItemClassificationBtn = (e) => {
@@ -233,6 +248,7 @@ const ListPage = () => {
 
     const res = await axios.post(`/items/search`, newData);
     setData(res.data);
+    clickResetBtn(); //초기화
   }
 
   return (
@@ -240,11 +256,11 @@ const ListPage = () => {
       <PageHeader>
         <PageTitle value="품목 조회"/>
         <div style={{ marginRight: "10px", display: "flex", gap: "8px"}}>
-          {/* <Button dataBsToggle={"modal"} dataBsTarget={"#basicModal"} buttonName="엑셀 등록" buttonClass="btn-dark"/> */}
           <Link to="/items/register" className="btn btn-dark">신규 등록</Link>
         </div>
       </PageHeader>
         <SearchPanel 
+          categoryInfo={categoryInfo}
           searchData={searchData}
           clickItemClassificationBtn={clickItemClassificationBtn}
           clicksubCategoryBtn={clicksubCategoryBtn}
@@ -254,25 +270,11 @@ const ListPage = () => {
           clickSearchBtn={clickSearchBtn}
           clickResetBtn={clickResetBtn}
           />
-        <div >
-          <span style={{ fontWeight: 'bold'}}>총 20건</span>
+        <div style={{marginBottom: "10px"}}>
+          <span style={{ fontWeight: 'bold'}}>총 {data.length}건</span>
         </div>
         <Table thead={tableHead} tbody={tableBody}/>
-        {/* 모달창 */}
-        <ModalMain>
-          <ModalHeader>
-            <h5 className="modal-title" id="exampleModalLabel1">엑셀 등록</h5>
-          </ModalHeader>
-          <ModalBody >
-            <div style={{ display: "flex", flexDirection: "column", rowGap: "10px"}}>
-              <Button buttonClass={"btn-secondary w-100"} buttonName={"엑셀 양식 다운로드"} />
-              {/* <Button buttonClass={"btn-secondary w-100"} buttonName={"엑셀 가져오기"} /> */}
-              <label className="btn btn-secondary" htmlFor="inputGroupFile04">엑셀 가져오기</label>
-              <input type="file" className="form-control" id="inputGroupFile04" aria-describedby="inputGroupFileAddon04" aria-label="Upload"
-                onChange={handleExcelFileChange} style={{display: 'none'}}/>
-            </div>
-          </ModalBody>
-      </ModalMain>
+        
     </PageCard>
   )
 }

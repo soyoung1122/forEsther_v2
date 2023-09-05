@@ -4,7 +4,6 @@ const SearchInput = ({onSubmit}) => {
   const [inputVal, setInputVal] = useState("");
   const styleSheet = {
     marginBottom: "10px",
-    width: "350px"
   }
   return (
     <div 
