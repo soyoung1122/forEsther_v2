@@ -117,7 +117,7 @@ public class UnitPriceController {
         return new ResponseEntity<Resource>((Resource) resource, headers, HttpStatus.OK);
     }
 
-    @GetMapping("/getChart/{icode}")
+    @GetMapping("/{icode}/getChart")
     public Map<String, Object> getChart(@PathVariable("icode") String item_code) {
         log.info("getChart=========================================");
 
@@ -128,7 +128,7 @@ public class UnitPriceController {
         return result;
     }
 
-    @PostMapping("/register")
+    @PostMapping()
     public String register(MultipartFile uploadFile, UnitPrice unitPrice, RedirectAttributes rttr) {
         if (!uploadFile.isEmpty()) {
 
@@ -165,7 +165,7 @@ public class UnitPriceController {
             service.register(unitPrice);
         }
 
-        return "redirect:/unitPrice/unitPriceList";
+        return "redirect:/unitprices";
     }
 
     @PostMapping("/autocomplete")

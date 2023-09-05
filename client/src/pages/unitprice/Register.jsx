@@ -14,14 +14,39 @@ import Autocomplete from "./Autocomplete";
 
 const Register = () => {
   const [selectedVal ,setSelectedVal] = useState("직접입력");
+  const [selectedRadio, setSelectedRadio] = useState("bp");
   const history = useHistory();
+  const [serialLot, setSerialLot] = useState("");
+  const [itemName, setItemname] = useState("");
+  const [sCost, setSCost] = useState(0);
+  const [pPrice, setPPrice] = useState(0);
+  const [sPrice, setSPrice] = useState(0);
+  const [margin, setMargin] = useState(0);
 
   const onLabelClick = (e) => {
     setSelectedVal(e.target.textContent);
   }
 
+  const onSelectRadio = (e) => {
+    setSelectedRadio(e.target.value);
+  }
+
   const onCancel = (e) => {
     history.push("/unitprices");
+  }
+
+  const onSelectSL = (item) => {
+    if(item.status == '등록완료') {
+      alert("이미 등록된 SL");
+    } else {
+      setItemname(item.item);
+      setSerialLot(item.value);
+    }
+  }
+
+  const onChangeMargin = (e) => {
+    setMargin(e.target.value);
+
   }
 
   const onSubmit = (e) => {
@@ -52,18 +77,7 @@ const Register = () => {
                 id={"sy-sl-autocomplete"}
                 value={"시리얼로트"}
               />
-              {/* <Input 
-                type={"text"}
-                id={"sy-sl-autocomplete"}
-                placeholder={"예시) RM-002-20231231"}
-                onChange={()=>{}}
-              /> */}
-              <Autocomplete />
-              {/* <input type="text" className="form-control"
-                name="serial_lot_code" id="sy-sl-autocomplete"
-                placeholder="예시) RM-002-20231231"
-                aria-describedby="floatingInputHelp" /> <label
-                for="floatingInput">시리얼로트</label> */}
+              <Autocomplete onClick={onSelectSL} />
             </FormGroup>
             </div>
             <div className="col mb-0">
@@ -72,15 +86,11 @@ const Register = () => {
                   id={"sy-cal-op"}
                   value={"표준원가"}
                 />
-              {/* <input type="text" className="form-control" id="sy-cal-op"
-                name="standard_cost" placeholder="예시) 10000"
-                aria-describedby="floatingInputHelp" /> <label
-                for="floatingInput">표준원가</label> */}
                 <Input 
                   type={"text"}
                   id={"sy-cal-op"}
                   placeholder={"예시) 10000"}
-                  onChange={()=>{}}
+                  onChange={(e)=>{setSCost(e.target.value)}}
                 />
                 
                 </FormGroup>
@@ -91,10 +101,6 @@ const Register = () => {
           <div className="row g-2">
             <div className="col mb-0">
               <FormGroup>
-              {/* <input type="text" className="form-control" id="sy-op-input"
-                name="item_name" placeholder="예시) 김치찌개"
-                aria-describedby="floatingInputHelp" /> <label
-                for="floatingInput">품목명</label> */}
                 <Label 
                   id={"sy-op-input"}
                   value={"품목명"}
@@ -103,17 +109,13 @@ const Register = () => {
                   type={"text"}
                   id={"sy-op-input"}
                   placeholder={"예시) 김치찌개"}
-                  onChange={()=>{}}
+                  onChange={(e)=>{setItemname(e.target.value)}}
                 />
                 
                 </FormGroup>
             </div>
             <div className="col mb-0">
             <FormGroup>
-              {/* <input type="text" className="form-control" id="sy-cal-bp"
-                name="purchase_price" placeholder="예시) 10000"
-                aria-describedby="floatingInputHelp" /> <label
-                for="floatingInput">구매단가</label> */}
                 <Label 
                   id={"sy-cal-bp"}
                   value={"구매단가"}
@@ -122,7 +124,7 @@ const Register = () => {
                   type={"text"}
                   id={"sy-cal-bp"}
                   placeholder={"예시) 10000"}
-                  onChange={()=>{}}
+                  onChange={(e)=>{setPPrice(e.target.value)}}
                 />
                 </FormGroup>
             </div>
@@ -134,8 +136,6 @@ const Register = () => {
               {/* <label for="nameBasic" className="form-label">판매단가</label> */}
               <div className="row g-2">
                 <div className="col">
-                  {/* <input name="selling_price" type="text" id="sy-cal-sp"
-                    className="form-control" /> */}
                     <FormGroup>
                     <Label 
                       id={"sy-cal-sp"}
@@ -145,7 +145,7 @@ const Register = () => {
                       type={"text"}
                       id={"sy-cal-sp"}
                       placeholder={"예시) 10000"}
-                      onChange={()=>{}}
+                      onChange={(e)=>{setSPrice(e.target.value)}}
                     />
                     </FormGroup>
                 </div>
@@ -156,11 +156,6 @@ const Register = () => {
                   <div className="sy-ui-select" style={{
                     width: "100%"
                   }}>
-                    {/* <select name="sy-ui-select" className="form-select"
-                      id="sy-select" aria-label="Default select example">
-                      <option value="N" selected="selected">직접입력</option>
-                      <option value="Y">자동계산</option>
-                    </select> */}
                     <Dropdown 
                       initValue={selectedVal}
                       onClick={onLabelClick}
@@ -180,6 +175,7 @@ const Register = () => {
               </div>
             </div>
           </div>
+          { selectedVal == "자동계산" ? (
           <div id="sy-cal-body">
             <div className="row g-2">
               <div className="col mb-0"></div>
@@ -187,25 +183,23 @@ const Register = () => {
                 <div className="row g-2">
                   <div className="col mt-3"style={{
                   display: "flex",
-                  justifyContent: "flex-end"
-                }}>
+                  justifyContent: "space-between"
+                }}><Label 
+                id={"sy-cal-m"}
+                value={"마진율"} />
                     <FormGroup type={"checkbox"}>
                   <Radio 
-                    name={"cal-price"}
+                      selected
+                      name={"cal-price"}
                       value={"op"}
                       id={"defaultRadio1"}
-                      onChange={() => {}}
+                      onChange={onSelectRadio}
                   />
                   <Label 
                     id={"defaultRadio1"}
                     value={"표준원가대비"}
-                    onChange={() => {}}
                   />
                   </FormGroup>
-                    {/* <input name="cal-price" className="form-check-input"
-                      value="op" type="radio" value="" id="defaultRadio1" />
-                    <label className="form-check-label" for="defaultRadio1">
-                      표준원가대비 </label> */}
                   </div>
                   <div className="col mt-3"style={{
                   display: "flex",
@@ -216,40 +210,31 @@ const Register = () => {
                       name={"cal-price"}
                       value={"bp"}
                       id={"defaultRadio2"}
+                      onChange={onSelectRadio}
                     />
                     <Label 
                     id={"defaultRadio2"}
                     value={"판매단가대비"} />
-                    {/* <input name="cal-price" className="form-check-input"
-                      value="bp" type="radio" value="" id="defaultRadio2"
-                      checked /> <label className="form-check-label"
-                      for="defaultRadio2"> 구매단가대비 </label> */}
                       </FormGroup>
                   </div>
                 </div>
               </div>
             </div>
-            <div className="row g-2">
-              <div className="col mb-0"></div>
-              <div className="col mb-0">
-                <FormGroup>
-                <Label 
+              <div className="row g-2">
+                <div className="col mb-0"></div>
+                <div className="col mb-0">
+                  <FormGroup>
+                  <Input 
+                    type={"text"}
                     id={"sy-cal-m"}
-                    value={"마진율"} />
-                {/* <input type="text" className="form-control" id="sy-cal-m"
-                  placeholder="예시) 10(단위 %)"
-                  aria-describedby="floatingInputHelp" /> <label
-                  for="floatingInput">마진율</label> */}
-                <Input 
-                  type={"text"}
-                  id={"sy-cal-m"}
-                  placeholder={"예시) 10(단위 %)"}
-                  onChange={()=>{}}
-                />
-                    </FormGroup>
+                    placeholder={"예시) 10(단위 %)"}
+                    onChange={onChangeMargin}
+                  />
+                      </FormGroup>
+                </div>
               </div>
-            </div>
-          </div>
+          </div> )
+          : null }
           <br />
           <div className="row g-2">
           <Label 
@@ -306,4 +291,4 @@ const Register = () => {
   );
 }
 
-export default Register;
+export default Register; 
