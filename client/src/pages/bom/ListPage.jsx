@@ -24,31 +24,21 @@ const ListPage = () => {
   const location = useLocation();
   const params = new URLSearchParams(location.search);
   const pageParam = params.get('page');
-  //console.log(location.search);
-  //console.log(params.get('page'));
-
-  //배열 타입이므로 []
-  // const [posts, setPosts] = useState([]);
-
-  //인터넷이 느릴 경우 로딩되는 중임을 보여주기 위해
-  // const [loading, setLoading] = useState(true);
 
   //현재 페이지 
   const [currentPage, setCurrentPage] = useState(1);
-
   //총 포스트 수
   const [numberOfData, setNumberOfData] = useState(0);
-
   //총 페이지 수
   const [numberOfPages, setNumberOfPages] = useState(0);
-
   //한 페이지에 몇개씩 글이 보일 것인지
   const limit = 5;
+  //현재 페이지의 인덱스 시작 숫자
+  const [startIndex, setStartIndex] = useState(1);
 
   useEffect(() => {
     //무조건 반올림 => 5개씩 출력 될때 14개면 3페이지가 출력 되어야 함
     setNumberOfPages(Math.ceil(numberOfData/limit));
-    console.log(numberOfPages)
   }, [numberOfData]);
   //글갯수에 따라 페이지 수가 변경되기 때문에 의존성 배열에 포스트 수를 넣음
 
@@ -63,35 +53,16 @@ const ListPage = () => {
     setCurrentPage(page);
   }
   const getData = (page = 1) => {
-        
-        
-    let params = {
-        _page: page,
-        _limit: limit,
-        _sort: 'bom_code',
-        _order: 'desc',
-        // title_like: searchText
-    }
-
-    console.log(params);
     
-    
-    
-    //then은 콜백 함수
-    //pagination 추가 (?_page=${page}&_limit=5) 페이지당 5개씩
-    //sort와 order 통해 id 값을 내림차순으로 정렬해 최신글 먼저 보이기
     axios.get(`boms/data`, {
-      
-        
-        params,
-        
+    
     }).then((res) => {
         //총 글 갯수
-        // console.log(res);
         // setNumberOfData(res.headers['x-total-count']);
         setNumberOfData(res.data.length);
         //서버로 부터 넘어온 값은 파라미터로 가져옴 res
         const offset = (page-1)*limit;
+        setStartIndex(offset+1);
         const sliceData = () => {
           if(res.data){
             let result = res.data.slice(offset, offset + limit);
@@ -100,9 +71,6 @@ const ListPage = () => {
         }
         
         setData(sliceData());
-        console.log(res.data);
-        //데이터 값 불러왔으면 loading 값 false로
-        // setLoading(false);
         
     });
     
@@ -121,15 +89,6 @@ const ListPage = () => {
   //}, [pageParam, getPosts]);
   }, []);
 
-  //서버 데이터 요청
-  // useEffect(()=> {
-  //   const getDate = async () => {
-  //     const res = await axios.get('boms/data');
-  //     setData(res.data);
-  //   }
-  //   getDate();
-  // }, [])
-
   const btn = [
     {
       text: "수정", 
@@ -142,7 +101,7 @@ const ListPage = () => {
       text: "삭제", 
       onClick: (e) => {
         console.log("삭제")
-        console.log(e)
+        console.log(e.target.value);
       }
     },
   ];
@@ -164,7 +123,8 @@ const ListPage = () => {
         }
       }
       const item_code = bom_code.substr(2, 5);
-      const newData = {bom_code, product_name, item_code, item_name: itemList, btn};
+      const no = startIndex + i;
+      const newData = {bom_code, product_name, item_code, item_name: itemList, btn, no};
       arr.push(newData);
       itemList = [];
 
@@ -206,7 +166,10 @@ const ListPage = () => {
     },
     {
       key: 'btn',
-      title: ''
+      title: '',
+      data: {
+        btnVal: 'bom_code'
+      }
     }
   ]
 
