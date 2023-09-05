@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import "../../styles/unitprices/Unitprice.css";
 
-function Autocomplete({onClick}) {
+function Autocomplete({ onClick, value }) {
   const [term, setTerm] = useState('');
   const [results, setResults] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
@@ -12,9 +12,6 @@ function Autocomplete({onClick}) {
       return;
     }
 
-    // AJAX 요청 대신 비동기 함수를 호출하여 데이터를 가져옵니다.
-    // 예를 들어, fetch 또는 axios를 사용하여 서버에서 데이터를 가져올 수 있습니다.
-    // 아래 예제는 가짜 데이터를 사용한 예시입니다.
     const fetchData = async () => {
       try {
         const response = await fetch(`/unitprices/autocomplete?value=${term}`, {
@@ -50,16 +47,22 @@ function Autocomplete({onClick}) {
 
   const handleSelect = (selectedItem) => {
     onClick(selectedItem);
+    setTerm(selectedItem.value); // 선택한 항목의 값을 인풋창에 입력
     setIsOpen(false); // 항목 선택 후 드롭다운 닫기
+  };
+
+  const handleInputChange = (e) => {
+    setTerm(e.target.value);
+    setIsOpen(false); // 입력이 변경되면 드롭다운 닫기
   };
 
   return (
     <div className="autocomplete-container">
       <input
-        className = 'form-control'
+        className='form-control'
         type="text"
         value={term}
-        onChange={(e) => setTerm(e.target.value)}
+        onChange={handleInputChange}
         minLength={2}
         autoFocus={true}
         placeholder=""

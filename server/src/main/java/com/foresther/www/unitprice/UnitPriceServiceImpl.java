@@ -2,7 +2,10 @@ package com.foresther.www.unitprice;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
@@ -16,7 +19,7 @@ public class UnitPriceServiceImpl implements UnitPriceService{
         return mapper.insert(vo);
     }
 
-    //@Transactional(rollbackFor = {SQLException.class})
+    @Transactional(rollbackFor = {SQLException.class})
     @Override
     public int registerWithFile(UnitPrice unitPrice, QuotationFile file) {
         try {
@@ -25,7 +28,7 @@ public class UnitPriceServiceImpl implements UnitPriceService{
 
         } catch (Exception e) {
             e.printStackTrace();
-            //TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return 0;
         }
 

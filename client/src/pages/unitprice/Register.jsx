@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
+import axios from '../../utils/axios';
 
 import Dropdown from "../../components/form/Dropdown";
 import Input from "../../components/form/Input";
@@ -22,6 +23,7 @@ const Register = () => {
   const [pPrice, setPPrice] = useState(0);
   const [sPrice, setSPrice] = useState(0);
   const [margin, setMargin] = useState(0);
+  const [selectedFile, setSelectedFile] = useState(null);
 
   const onLabelClick = (e) => {
     setSelectedVal(e.target.textContent);
@@ -61,6 +63,23 @@ const Register = () => {
 
   const onSubmit = (e) => {
     e.preventDefault();
+    const formData = new FormData();
+
+    formData.append("uploadFile", selectedFile); // selectedFile은 파일 업로드 필드에서 선택한 파일입니다. 
+    formData.append("serial_lot_code", serialLot); // serialLot은 UnitPrice 데이터 중 일부로 가정합니다.
+    formData.append("item_name", itemName);
+    formData.append("standard_cost", sCost);
+    formData.append("purchase_price", pPrice);
+    formData.append("selling_price", sPrice);
+  
+    axios.post("unitprices", formData)
+      .then(() => {
+        alert("등록완료");
+        history.push("/unitprices");
+      })
+      .catch((error) => {
+        console.error("등록 오류:", error);
+      });
   }
 
   return (
@@ -69,8 +88,9 @@ const Register = () => {
         <PageTitle value="단가 신규등록" />
       </PageHeader>
       <form id="registerForm" className="modal-body"
-          enctype="multipart/form-data" action="/unitPrice/register"
-          method="post">
+          enctype="multipart/form-data" action="/unitprices"
+          method="post"
+          onSubmit={onSubmit}>
           <div className="row g-2">
             <div className="col mb-0">
               <h6 className="sub-title">품목 정보</h6>
@@ -87,7 +107,7 @@ const Register = () => {
                 id={"sy-sl-autocomplete"}
                 value={"시리얼로트"}
               />
-              <Autocomplete onClick={onSelectSL} />
+              <Autocomplete onClick={onSelectSL} value={serialLot} />
             </FormGroup>
             </div>
             <div className="col mb-0">
@@ -97,6 +117,7 @@ const Register = () => {
                   value={"표준원가"}
                 />
                 <Input 
+                  
                   type={"text"}
                   id={"sy-cal-op"}
                   placeholder={"예시) 10000"}
@@ -116,12 +137,11 @@ const Register = () => {
                   id={"sy-op-input"}
                   value={"품목명"}
                 />
-                <input
+                <Input
                   value={itemName}
-                  type="text"
-                  className="form-control"
-                  id="sy-op-input"
-                  placeholder="예시) 김치찌개"
+                  type={"text"}
+                  id={"sy-op-input"}
+                  placeholder={"예시) 김치찌개"}
                   onChange={(e)=>{setItemname(e.target.value)}}
                 />
                 
@@ -155,12 +175,11 @@ const Register = () => {
                       id={"sy-cal-sp"}
                       value={"판매단가"}
                     />
-                    <input
+                    <Input
                       value={sPrice}
-                      type="text"
-                      className="form-control"
-                      id="sy-cal-sp"
-                      placeholder="예시) 10000"
+                      type={"text"}
+                      id={"sy-cal-sp"}
+                      placeholder={"예시) 10000"}
                       onChange={(e)=>{setSPrice(e.target.value)}}
                     />
                     </FormGroup>
@@ -264,7 +283,11 @@ const Register = () => {
               {/* <label for="nameBasic" className="form-label">견적서 파일 첨부</label> */}
               <input type="file" className="form-control" name="uploadFile"
                 id="fileInput" aria-describedby="inputGroupFileAddon04"
-                aria-label="Upload" />
+                aria-label="Upload" 
+                onChange={(e) => {
+                const file = e.target.files[0]; // 파일 데이터 추출
+                setSelectedFile(file);}}
+              />
               <button className="btn btn-outline-primary" type="button"
                 id="fileBtn">첨부</button>
               <input type="hidden" name="file_name" /> <input
@@ -295,7 +318,7 @@ const Register = () => {
               <Button 
                 type={"submit"}
                 value={"등록"}
-                onClick={onSubmit}
+                onClick={()=> console.log(1)}
                 className={"btn-primary"}
               />
             </div>
