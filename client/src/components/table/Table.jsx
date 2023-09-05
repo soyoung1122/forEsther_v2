@@ -11,14 +11,11 @@ const Table = ({ thead, tbody, isChild, cthead }) => {
   const [accordionData, setAccordionData] = useState([]);
 
   const fetchDataForAccordion = async (index, value) => {
-    const res = await axios.get(`bom/data/${value}`);
+    const res = await axios.get(`boms/data/${value}`);
     
      
     const tbody = [];
       res.data.map((data) => {
-        console.log(data.item_code);
-        console.log(data.item_vo.item_name);
-        console.log(data.required_quantity);
         const childItem = {
           "child_item_code" : data.item_code,
           "child_item_name" : data.item_vo.item_name,
@@ -74,7 +71,7 @@ const Table = ({ thead, tbody, isChild, cthead }) => {
                 {thead.map((th, i) => {
                   let value = 
                       th.key === "no"
-                      ? index + 1
+                      ? tr[th.key]
                       : th.isCurrency
                       ? tr[th.key].toLocaleString()
                       :tr[th.key];
