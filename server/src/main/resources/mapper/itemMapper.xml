@@ -61,6 +61,7 @@
             i.item_name,
             i.item_specification,
             i.safety_stock,
+            i.created_at,
             isu.item_supplier_code,
             su.supplier_name,
             su.supplier_code,
@@ -76,6 +77,7 @@
                  LEFT JOIN tbl_supplier su ON isu.supplier_code = su.supplier_code
                  LEFT JOIN tbl_sub_category sc ON i.sub_category_code = sc.sub_category_code
                  LEFT JOIN tbl_main_category mc ON sc.main_category_code = mc.main_category_code
+        ORDER BY i.created_at DESC
     </select>
 
     <select id="selectItemBySearch" resultMap="ItemVO">
@@ -85,6 +87,7 @@
             i.item_name,
             i.item_specification,
             i.safety_stock,
+            i.created_at,
             isu.item_supplier_code,
             su.supplier_name,
             su.supplier_code,
@@ -117,6 +120,7 @@
                 AND (su.supplier_name LIKE '%' || #{supplier_name} || '%' OR #{supplier_name} IS NULL)
             </if>
         </where>
+        ORDER BY i.created_at DESC
     </select>
     
     <select id="selectMainCategories" resultMap="MainCategoryVO">
