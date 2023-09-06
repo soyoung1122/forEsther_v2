@@ -16,7 +16,7 @@ import SearchInput from "../../components/search/SearchInput";
 import Dropdown from "../../components/form/Dropdown";
 import Input from "../../components/form/Input";
 
-const ListPage = () => {
+const RegisterPage = () => {
   // const [data, setData] = useState([]);
   // const [tableBody, setTableBody] = useState([]);
   // const history = useHistory();
@@ -291,4 +291,4 @@ const ListPage = () => {
   )
 }
 
-export default ListPage;
+export default RegisterPage;
