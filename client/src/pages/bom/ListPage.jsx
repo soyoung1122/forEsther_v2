@@ -182,7 +182,6 @@ const ListPage = () => {
     } else {
       axios.post(`boms/register/${parentItemCode}&${productName}`).then((res) => {
         // history.push(`boms/B-${parentItemCode}-`);
-        console.log(res.data);
       });
     }
   }
