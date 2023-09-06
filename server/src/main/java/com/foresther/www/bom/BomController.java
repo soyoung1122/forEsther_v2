@@ -30,10 +30,26 @@ public class BomController {
 
     }
 
-    @GetMapping("data/{item_name}")
-    public List<ItemVO> searchItemList(@PathVariable String item_name) {
-        item_name = "%" + item_name + "%";
+    @GetMapping("product/item/data")
+    public List<ItemVO> ProductItemList() {
 
-        return null;
+        return service.searchProduct("%%");
     }
+
+    @GetMapping("product/item/data/{item_name}")
+    public List<ItemVO> searchProductItemList(@PathVariable String item_name) {
+        item_name = "%" + item_name + "%";
+        return service.searchProduct(item_name);
+    }
+
+    @PostMapping("register/{item_code}&{product_name}")
+    public String bomAdd(@PathVariable String item_code, @PathVariable String product_name) {
+        return  product_name;
+    }
+
+//    @GetMapping("{bom_code}")
+//    public BomVO bomDetails(@PathVariable String bom_code) {
+//
+//    }
+
 }
