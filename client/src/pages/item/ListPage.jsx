@@ -58,8 +58,6 @@ const ListPage = () => {
     const dataList = [];
     let supplierList = [];
 
-
-
     for(let i=0; i<data.length; i++) {
       let itemClassification = {
         name: '',
@@ -255,7 +253,7 @@ const ListPage = () => {
     <PageCard>
       <PageHeader>
         <PageTitle value="품목 조회"/>
-        <div style={{ marginRight: "10px", display: "flex", gap: "8px"}}>
+        <div style={{display: "flex", gap: "8px"}}>
           <Link to="/items/register" className="btn btn-dark">신규 등록</Link>
         </div>
       </PageHeader>
