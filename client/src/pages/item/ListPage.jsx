@@ -1,4 +1,4 @@
-import { useState, useEffect, useReducer } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 
@@ -7,11 +7,6 @@ import PageHeader from "../../components/page/PageHeader";
 import PageTitle from "../../components/page/PageTitle";
 import Table from "../../components/table/Table";
 import SearchPanel from "./components/SearchPanel";
-import Button from "../../components/button/Button";
-import ModalMain from "../../components/modal/ModalMain";
-import ModalHeader from "../../components/modal/ModalHeader";
-import ModalBody from "../../components/modal/ModalBody";
-
 
 const ListPage = () => {
   const [data, setData] = useState([]);
@@ -124,7 +119,6 @@ const ListPage = () => {
       supplierList = []; //리셋
     };
 
-    console.log(dataList)
     setTableBody([...dataList]);
   }, [data])
 
@@ -185,8 +179,6 @@ const ListPage = () => {
       }
     }
   ]
-
-
 
   //품목구분 드롭다운 이벤트
   const clickItemClassificationBtn = (e) => {
