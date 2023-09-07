@@ -66,6 +66,7 @@
             i.item_specification,
             i.safety_stock,
             i.created_at,
+            i.procurement,
             isu.item_supplier_code,
             su.supplier_name,
             su.supplier_code,
