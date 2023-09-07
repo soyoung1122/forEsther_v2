@@ -22,6 +22,11 @@ public class BomController {
         return service.getListOrigin();
     }
 
+    @PostMapping("search/{product_name}")
+    public List<BomVO> bomSearch(@PathVariable String product_name) {
+        return service.get(product_name);
+    }
+
     @GetMapping("data/{bom_code}")
     public List<BomRegistrationVO> getChildItem(@PathVariable String bom_code){
         return service.getBomRegistration(bom_code);

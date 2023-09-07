@@ -16,6 +16,7 @@ import '../../styles/common/BomRegister.css'
 
 const RegisterPage = () => {
   const {bom_code} = useParams();
+  const {isNew} = useParams();
   const [bom, setBom] = useState();
   const [childItemList, setChildItemList] = useState([]);
   const [itemList, setItemList] = useState([]);
@@ -28,6 +29,7 @@ const RegisterPage = () => {
   
   useEffect(() => {
       getData();
+      console.log(bom_code);
     }, []);
     
     
