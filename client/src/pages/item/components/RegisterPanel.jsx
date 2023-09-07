@@ -69,17 +69,12 @@ const RegisterPanel = ({
   ]
 
   useEffect(()=> {
-    console.log(data)
-
     if(item_name != '' && item_classification != '품목구분' && procurement != '조달방법' && 
       safety_stock != '' && sub_category_name != '소분류' && supplier_name != '') {
         setIsDisabled(false);
       } else {
         setIsDisabled(true);
       }
-
-
-
   }, [data])
 
   //품목 복사 시 필요한 기능
