@@ -19,6 +19,7 @@ const RegisterPanel = ({
   const { item_name, item_classification, procurement, sub_category_code, sub_category_name, item_specification, safety_stock, supplier_name } = data;
   const { subCategory } = categoryInfo;
 
+  const [isDisabled, setIsDisabled] = useState(true); //true면 버튼 비활성화 상태
   const [specification, setSpecification] = useState({ value: '', unit: '단위'});
   const [supplier, setSupplier] = useState({
     contactPerson: '',
@@ -67,6 +68,21 @@ const RegisterPanel = ({
     },
   ]
 
+  useEffect(()=> {
+    console.log(data)
+
+    if(item_name != '' && item_classification != '품목구분' && procurement != '조달방법' && 
+      safety_stock != '' && sub_category_name != '소분류' && supplier_name != '') {
+        setIsDisabled(false);
+      } else {
+        setIsDisabled(true);
+      }
+
+
+
+  }, [data])
+
+  //품목 복사 시 필요한 기능
   useEffect(()=> {
     if(item_specification == '') return;
     const spec = item_specification.split(/([a-zA-Z]+)/);
@@ -197,7 +213,7 @@ const RegisterPanel = ({
 
         <div className="row justify-content-center" style={{ marginTop: "40px"}}>
           <div style={{width: "300px"}}>
-            <Button type={`submit`} value={`추가`} className={`btn-dark`} onClick={submitForm}/>
+            <Button type={`submit`} value={`추가`} className={`btn-dark`} onClick={submitForm} disabled={isDisabled}/>
           </div>
         </div>
       </Form>
