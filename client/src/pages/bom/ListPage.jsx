@@ -41,7 +41,7 @@ const ListPage = () => {
 
   const [productName, setProductName] = useState('');
 
-  const [parentItemCode, setparentItemCode] = useState('');
+  const [parentItemCode, setParentItemCode] = useState('');
 
 
   useEffect(() => {
@@ -75,7 +75,10 @@ const ListPage = () => {
     
     }).then((res) => {
       setProductList(res.data);
-      setparentItemCode(res.data[0].item_code);
+      setParentItemCode(res.data[0].item_code);
+
+      console.log(parentItemCode);
+
     });
     
   }; 
@@ -100,6 +103,7 @@ const ListPage = () => {
         }
         
         setData(sliceData());
+
         
     });
     
@@ -126,8 +130,7 @@ const ListPage = () => {
     {
       text: "수정", 
       onClick: (e) => {
-        console.log("수정")
-        console.log(e)
+        history.push(`boms/${e.target.value}`)
       }
     },
     {
@@ -173,15 +176,24 @@ const ListPage = () => {
 
 
   const onChangeProduct = (e) => {
-    setparentItemCode(e.target.value);
+    setParentItemCode(e.target.value);
   }
 
   const insertBom = () => {
     if(productName.length === 0) {
       alert("제품명을 입력해 주세요.");
     } else {
-      axios.post(`boms/register/${parentItemCode}&${productName}`).then((res) => {
-        // history.push(`boms/B-${parentItemCode}-`);
+      let requestData = {
+        itemCode: parentItemCode,
+        productName: productName
+      }
+      axios.post(`boms/register`, requestData).then((res) => {
+        const backdropElement = document.querySelector(".modal-backdrop");
+        if (backdropElement) {
+          // .modal-backdrop 요소가 존재하는 경우에만 삭제
+          document.body.removeChild(backdropElement);
+        }
+        history.push(`boms/${res.data.newBomCode}`);
       });
     }
   }
@@ -351,7 +363,7 @@ const ListPage = () => {
           </div>
         </ModalBody>
         <ModalFooter>
-          <Button buttonClass={"btn-label-secondary"} dataBsDismiss={"modal"} buttonName={"취소"} />
+          <Button buttonClass={"btn btn-outline-primary"} dataBsDismiss={"modal"} buttonName={"취소"} />
           <Button 
             ButtonId={"btnRegister"} 
             buttonName={"BOM 등록"} 

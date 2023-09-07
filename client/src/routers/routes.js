@@ -31,7 +31,7 @@ const routes = [
         component: Bom
     },    
     {
-        path: '/boms/register',
+        path: '/boms/:bom_code',
         component: BomRegister
     },
 ];
