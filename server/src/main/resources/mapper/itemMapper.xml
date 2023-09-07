@@ -54,6 +54,10 @@
         <collection property="subCategory_vo" resultMap="SubCategoryVO" />
     </resultMap>
 
+    <select id="selectItemById" resultType="ItemVO" parameterType="String">
+        SELECT * FROM tbl_items WHERE item_code = #{copyId}
+    </select>
+
     <select id="selectItems" resultMap="ItemVO">
         SELECT DISTINCT
             i.item_code,

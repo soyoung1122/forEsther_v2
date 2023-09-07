@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import axios from "axios";
 
 import PageCard from "../../components/page/PageCard";
@@ -9,6 +9,7 @@ import Table from "../../components/table/Table";
 import SearchPanel from "./components/SearchPanel";
 
 const ListPage = () => {
+  const history = useHistory();
   const [data, setData] = useState([]);
   const [tableBody, setTableBody] = useState([]);
   const [categoryInfo, setCategoryInfo] = useState({
@@ -109,7 +110,12 @@ const ListPage = () => {
           {
             text: "복사", 
             onClick: (e) => {
-              console.log("복사")
+              if(window.confirm('품목을 복사하시겠습니까?')) {
+                history.push(`/items/register?copyId=${e.target.value}`);
+              } else {
+                return;
+              }
+              
             }
           },
         ]

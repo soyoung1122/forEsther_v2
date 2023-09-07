@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import { Link, useHistory, useLocation } from "react-router-dom/cjs/react-router-dom.min";
 import axios from "axios";
 
 import readExcel from '../../utils/readExcel';
@@ -19,6 +19,9 @@ import ModalBody from "../../components/modal/ModalBody";
 
 const RegisterPage = () => {
   const history = useHistory();
+  const location = useLocation();
+  const copyId = location.search.split('=')[1];
+
   //form 데이터
   const [data, setData] =useState({
     item_name: '',
@@ -106,6 +109,19 @@ const RegisterPage = () => {
       setCategoryInfo({ mainCategory: mainArr, subCategory: subArr});
     };
     getCategory();
+  }, [])
+
+  //품목 복사 페이지 첫 로드 시
+  useEffect(() => {
+    if(copyId === undefined) return;
+    const getCopyItem = async () => {
+      const res = await axios.get(`/items/register/${copyId}`);
+      console.log(res.data);
+      //form 데이터 업데이트
+      setData({...data, ...res.data})
+    }
+
+    getCopyItem();
   }, [])
 
   //엑셀 가져오기 버튼 이벤트

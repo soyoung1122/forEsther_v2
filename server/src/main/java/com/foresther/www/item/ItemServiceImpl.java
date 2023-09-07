@@ -20,6 +20,11 @@ public class ItemServiceImpl implements ItemService{
     }
 
     @Override
+    public ItemVO findItembyId(String copyId) {
+        return mapper.selectItemById(copyId);
+    }
+
+    @Override
     public int findSubCategory(String value) {
         return mapper.selectSubCategory(value);
     }

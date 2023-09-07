@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Button from "../../../components/form/Button";
 import Dropdown from "../../../components/form/Dropdown";
 import Form from "../../../components/form/Form";
@@ -66,6 +66,20 @@ const RegisterPanel = ({
       value: 'l'
     },
   ]
+
+  useEffect(()=> {
+    if(item_specification == '') return;
+    const spec = item_specification.split(/([a-zA-Z]+)/);
+    setSpecification({value: spec[0], unit: spec[1]});
+  }, [item_specification])
+
+  useEffect(()=> {
+    if(subCategory.length == 0) return;
+    const categoryName = subCategory.filter(item => item.value == sub_category_code);
+    if(categoryName.length == 0) return;
+    setData({...data, sub_category_name: categoryName[0].name});
+
+  }, [sub_category_code])
 
   //품목명 이벤트
   const changeItemName = (e) => {

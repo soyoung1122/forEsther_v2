@@ -58,6 +58,10 @@ public class ItemController {
                 : new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+    @GetMapping("/register/{copyId}")
+    public ItemVO itemDetail(@PathVariable("copyId") String copyId) {
+        return service.findItembyId(copyId);
+    }
 
     @PostMapping("/search")
     public List<ItemVO> itemListBySearch(@RequestBody Map<String, Object> searchCriteria) {
