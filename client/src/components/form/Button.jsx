@@ -5,7 +5,7 @@ const Button = ({type, value, className,  onClick, disabled}) => {
       className={`btn w-100 ${className}`} 
       onClick={onClick} 
       disabled={disabled}
-      style={{ cursor: `${disabled ? 'none' : 'pointer'}` }}
+      style={{ cursor: `${disabled ? 'not-allowed' : 'pointer'}` }}
     >
       {value}
     </button>
