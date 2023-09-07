@@ -20,7 +20,7 @@ const Layout = ({ children }) => {
   return (
     <div className="layout-container"  style={styles.mainContainer}>
       <Navbar />
-      <div className="row">
+      <div className="row" style={{height: "100vh", overFlowX: "hidden", overflowY: "auto"}}>
         <div className="col-md-2" style={styles.dummy}></div>
         <main className="col-md-10" style={styles.pageContainer}>
           {children}

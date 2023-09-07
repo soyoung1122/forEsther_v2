@@ -23,7 +23,10 @@ const SearchInput = ({onSubmit}) => {
       <button 
         type="submit" 
         className="btn btn-secondary search-btn"
-        onSubmit={() => {onSubmit(inputVal)}}
+        onClick={(e) => {
+          e.preventDefault();
+          onSubmit(inputVal);
+        }}
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
