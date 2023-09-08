@@ -357,5 +357,5 @@ const ListPage = () => {
     </PageCard>
   )
 }
-
+//아이템 리스트
 export default ListPage;
