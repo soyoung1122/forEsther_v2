@@ -371,6 +371,9 @@ const ListPage = () => {
           />
         </ModalFooter>
       </ModalMain>
+      <div style={{marginBottom: "10px"}}>
+        <span style={{ fontWeight: 'bold'}}>총 {numberOfData}건</span>
+      </div>
       <Table 
         thead={tableHead} 
         tbody={tableBody}
