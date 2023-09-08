@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useHistory } from "react-router-dom";
+import { Link, useHistory, useLocation } from "react-router-dom";
 import axios from "axios";
 
 import PageCard from "../../components/page/PageCard";
@@ -7,6 +7,7 @@ import PageHeader from "../../components/page/PageHeader";
 import PageTitle from "../../components/page/PageTitle";
 import Table from "../../components/table/Table";
 import SearchPanel from "./components/SearchPanel";
+import Pagination from "../../components/pagination/Pagination";
 
 const ListPage = () => {
   const history = useHistory();
@@ -24,29 +25,105 @@ const ListPage = () => {
     supplier_name: ''
   })
 
+  //현재페이지를 url에 저장하기 위해
+  const location = useLocation();
+  const params = new URLSearchParams(location.search);
+  const pageParam = params.get('page');
+
+  //현재 페이지 
+  const [currentPage, setCurrentPage] = useState(1);
+  //총 포스트 수
+  const [numberOfData, setNumberOfData] = useState(0);
+  //총 페이지 수
+  const [numberOfPages, setNumberOfPages] = useState(0);
+  //한 페이지에 몇개씩 글이 보일 것인지
+  const limit = 10;
+  //현재 페이지의 인덱스 시작 숫자
+  const [startIndex, setStartIndex] = useState(1);
+
+  useEffect(() => {
+    //무조건 반올림 => 5개씩 출력 될때 14개면 3페이지가 출력 되어야 함
+    setNumberOfPages(Math.ceil(numberOfData/limit));
+  }, [numberOfData]);
+  //글갯수에 따라 페이지 수가 변경되기 때문에 의존성 배열에 포스트 수를 넣음
+
+  //뒤로가기 했을 때 이전 페이지로 돌아가는게 아닌 다른페이지로 이동하는 문제 해결을 위해
+  const onClickPageButton = (page) => {
+    // history.push(`/admin?page=${page}`);
+    //Blogs에서 다른 페이지 이동할 때 Admin의 페이지로 이동하는거 해결하기
+    history.push(`${location.pathname}?page=${page}`);
+    getData(page);
+
+    //페이지 버튼 눌러도 색이 안바뀌어서 넣어 줌
+    setCurrentPage(page);
+  }
+
+
+  const getData = async (page = 1) => {
+    const newData = {...searchData};
+
+    if(newData.item_classification == '품목구분') {
+      newData.item_classification = '';
+    }
+
+    if(newData.main_category_name == '대분류') {
+      newData.main_category_name = '';
+    }
+
+    if(newData.sub_category_name == '소분류') {
+      newData.sub_category_name = '';
+    }
+
+    // const res = await axios.post(`/items/search`, newData);
+    // setData(res.data);
+    // clickResetBtn(); //초기화
+
+
+
+
+    //품목 데이터 요청
+    const resItem = await axios.post('/items/search', newData);
+    setNumberOfData(resItem.data.length);
+    
+    const offset = (page-1)*limit;
+    setStartIndex(offset+1);
+    const sliceData = () => {
+      if(resItem){
+        let result = resItem.data.slice(offset, offset + limit);
+        return result;
+      }
+    }
+    setData(sliceData());
+    
+
+    //품목 분류 데이터 요청
+    const resCat = await axios.get('/items/category');
+
+    //드롭다운 컴포넌트에 맞춰 데이터 가공
+    const mainArr= [];
+    const subArr = [];
+    resCat.data.mainCategory.forEach(item => {
+      mainArr.push({ idx: item.main_category_code, name: item.main_category_name, value:  item.main_category_name });
+    })
+    resCat.data.subCategory.forEach(item => {
+      subArr.push({ idx: item.sub_category_code, name: item.sub_category_name, value:  item.sub_category_name });
+    })
+
+    setCategoryInfo({ mainCategory: mainArr, subCategory: subArr});
+
+    
+  }
   //서버 데이터 요청
   useEffect(()=> {
-    const getDate = async () => {
-      //품목 데이터 요청
-      const resItem = await axios.get('/items');
-      setData(resItem.data);
+    //넘어온 페이지 값으로 currentPage 값 적용
+    setCurrentPage(parseInt(pageParam) || 1);
 
-      //품목 분류 데이터 요청
-      const resCat = await axios.get('/items/category');
+    //함수 호출해서 불러오기
+    //리렌더링을 통해 현재 페이지 출력
+    //pageParam은 string이기 때문에 int로 캐스팅을 해줘야 함
+    //페이지 번호가 없다면 default로 1
+    getData(parseInt(pageParam) || 1);
 
-      //드롭다운 컴포넌트에 맞춰 데이터 가공
-      const mainArr= [];
-      const subArr = [];
-      resCat.data.mainCategory.forEach(item => {
-        mainArr.push({ idx: item.main_category_code, name: item.main_category_name, value:  item.main_category_name });
-      })
-      resCat.data.subCategory.forEach(item => {
-        subArr.push({ idx: item.sub_category_code, name: item.sub_category_name, value:  item.sub_category_name });
-      })
-
-      setCategoryInfo({ mainCategory: mainArr, subCategory: subArr});
-    }
-    getDate();
   }, [])
 
   //테이블 바디 데이터 가공
@@ -87,6 +164,7 @@ const ListPage = () => {
           break;
       }
 
+      const no = startIndex + i;
       const newData = {
         item_code, 
         item_name, 
@@ -121,7 +199,8 @@ const ListPage = () => {
               
             }
           },
-        ]
+        ],
+        no
       };
 
       dataList.push(newData);
@@ -279,10 +358,17 @@ const ListPage = () => {
           clickResetBtn={clickResetBtn}
           />
         <div style={{marginBottom: "10px"}}>
-          <span style={{ fontWeight: 'bold'}}>총 {data.length}건</span>
+          <span style={{ fontWeight: 'bold'}}>총 {numberOfData}건</span>
         </div>
         <Table thead={tableHead} tbody={tableBody}/>
-        
+        {/* 페이지가 1개밖에 없을 때 페이지 버튼 안보이기 */}
+        {numberOfPages > 1 && <Pagination 
+                      currentPage={currentPage} 
+                      numberOfPages={numberOfPages} 
+                      //onClick={getPosts}    
+                      onClick={onClickPageButton}    
+                  /> 
+              }
     </PageCard>
   )
 }
