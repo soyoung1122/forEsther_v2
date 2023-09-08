@@ -15,11 +15,11 @@ import { useLocation } from "react-router-dom/cjs/react-router-dom.min";
 import SearchInput from "../../components/search/SearchInput";
 import Dropdown from "../../components/form/Dropdown";
 import Input from "../../components/form/Input";
-
 const ListPage = () => {
   const [data, setData] = useState([]);
   const [tableBody, setTableBody] = useState([]);
   const history = useHistory();
+  const [productList, setProductList] = useState([]);
 
   //현재페이지를 url에 저장하기 위해
   const location = useLocation();
@@ -39,6 +39,11 @@ const ListPage = () => {
 
   const [searchItemText, setSearchItemText] = useState('');
 
+  const [productName, setProductName] = useState('');
+
+  const [parentItemCode, setParentItemCode] = useState('');
+
+
   useEffect(() => {
     //무조건 반올림 => 5개씩 출력 될때 14개면 3페이지가 출력 되어야 함
     setNumberOfPages(Math.ceil(numberOfData/limit));
@@ -55,6 +60,30 @@ const ListPage = () => {
     //페이지 버튼 눌러도 색이 안바뀌어서 넣어 줌
     setCurrentPage(page);
   }
+
+
+  //키가 눌릴때 마다 최초로 post들을 불러옴
+  const onSearchItem = (e) => {
+    //Enter가 눌렸을 때 함수가 호출
+    if(e.key == 'Enter'){
+      getSearchProductItemList();
+    }
+  }
+  
+  const getSearchProductItemList = () => {
+    axios.get(`boms/product/item/data/${searchItemText}`, {
+    
+    }).then((res) => {
+      setProductList(res.data);
+      setParentItemCode(res.data[0].item_code);
+
+      console.log(parentItemCode);
+
+    });
+    
+  }; 
+
+
   const getData = (page = 1) => {
     
     axios.get(`boms/data`, {
@@ -74,6 +103,7 @@ const ListPage = () => {
         }
         
         setData(sliceData());
+
         
     });
     
@@ -89,6 +119,10 @@ const ListPage = () => {
       //페이지 번호가 없다면 default로 1
       getData(parseInt(pageParam) || 1);
 
+      
+      getSearchProductItemList();
+
+
   //}, [pageParam, getPosts]);
   }, []);
 
@@ -96,8 +130,7 @@ const ListPage = () => {
     {
       text: "수정", 
       onClick: (e) => {
-        console.log("수정")
-        console.log(e)
+        history.push(`boms/${e.target.value}`)
       }
     },
     {
@@ -140,7 +173,31 @@ const ListPage = () => {
     };
     setTableBody([...arr]);
   }, [data])
- 
+
+
+  const onChangeProduct = (e) => {
+    setParentItemCode(e.target.value);
+  }
+
+  const insertBom = () => {
+    if(productName.length === 0) {
+      alert("제품명을 입력해 주세요.");
+    } else {
+      let requestData = {
+        itemCode: parentItemCode,
+        productName: productName
+      }
+      axios.post(`boms/register`, requestData).then((res) => {
+        const backdropElement = document.querySelector(".modal-backdrop");
+        if (backdropElement) {
+          // .modal-backdrop 요소가 존재하는 경우에만 삭제
+          document.body.removeChild(backdropElement);
+        }
+        history.push(`boms/${res.data.newBomCode}`);
+      });
+    }
+  }
+
   const tableHead = [
     { 
       key: 'no',
@@ -242,7 +299,9 @@ const ListPage = () => {
           <SearchInput />
         </div>
       </div>
-      <ModalMain>
+      <ModalMain
+        modalClass={"modal-lg"}
+      >
         <ModalHeader>
         <h5 className="modal-title" id="exampleModalLabel1">BOM 신규 작성</h5>
         </ModalHeader>
@@ -251,25 +310,39 @@ const ListPage = () => {
             <div className="col mb-0">
               <div className="input-group input-group-merge">
                 <span className="input-group-text" id="basic-addon-search31">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-search" viewBox="0 0 16 16">
                     <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
                   </svg>
                 </span>
                 <input 
                   type="text" 
-                  class="form-control" 
+                  className="form-control" 
                   id="item_name_input"  
                   placeholder="품목명 검색..." 
                   aria-label="Search..." 
                   aria-describedby="basic-addon-search31" 
                   value={searchItemText}
                   onChange={(e) => {setSearchItemText(e.target.value)}}
+                  onKeyUp={onSearchItem}
                 />
               </div>
               <br/>
               <label htmlFor="item_name" className="form-label">모품목 선택</label>
-              <select className="form-select" id="item_name" aria-label="모품목을 선택해 주세요">
- 
+              <select 
+                className="form-select" 
+                id="item_name" 
+                aria-label="모품목을 선택해 주세요"
+                onChange={onChangeProduct}
+              >
+                {
+                  productList.map((data, i) => {
+                    if(i === 0) {
+                      return (<option value={data.item_code} selected>{data.item_name}</option>	)
+                    } else {
+                      return (<option value={data.item_code}>{data.item_name}</option>);
+                    }
+                  })
+                }
               </select>
             </div>
           </div>
@@ -277,15 +350,30 @@ const ListPage = () => {
           <div className="row g-2">
             <div className="col mb-0">
               <label htmlFor="product_name" className="form-label">제품명</label>
-              <input type="text" id="product_name" className="form-control" placeholder="BOM 등록할 제품명을 등록하세요." />
+              <input 
+                  type="text" 
+                  className="form-control" 
+                  id="product_name"  
+                  placeholder="BOM 등록할 제품명을 등록하세요."
+                  value={productName}
+                  onChange={(e) => {setProductName(e.target.value)}}
+                  onKeyUp={onSearchItem}
+                />
             </div>
           </div>
         </ModalBody>
         <ModalFooter>
-          <Button buttonClass={"btn-label-secondary"} dataBsDismiss={"modal"} buttonName={"취소"} />
-          <Button ButtonId={"btnRegister"} buttonName={"BOM 등록"} />
+          <Button buttonClass={"btn btn-outline-primary"} dataBsDismiss={"modal"} buttonName={"취소"} />
+          <Button 
+            ButtonId={"btnRegister"} 
+            buttonName={"BOM 등록"} 
+            onClick={insertBom}
+          />
         </ModalFooter>
       </ModalMain>
+      <div style={{marginBottom: "10px"}}>
+        <span style={{ fontWeight: 'bold'}}>총 {numberOfData}건</span>
+      </div>
       <Table 
         thead={tableHead} 
         tbody={tableBody}

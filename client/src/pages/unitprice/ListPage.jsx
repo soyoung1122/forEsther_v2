@@ -36,6 +36,9 @@ const ListPage = () => {
     setModalSet(set);
   }
 
+  const { head, list, searchLabel, currentPage, numberOfPages, numberOfData, onClickPageButton } = useUnitprices({changeModal});
+
+
   const handleDownload = async (link) => {
     try { 
       // 서버로 파일 다운로드 요청 보내기
@@ -79,7 +82,6 @@ const ListPage = () => {
     setFile(blobUrl);
   }
 
-  const { head, list, searchLabel } = useUnitprices({changeModal, setDetail, setChartData});
   const [selectedVal ,setSelectedVal] = useState("품목명");
 
 
@@ -113,6 +115,9 @@ const ListPage = () => {
           <SearchInput />
         </div>
       </div>
+      <div style={{marginBottom: "10px"}}>
+        <span style={{ fontWeight: 'bold'}}>총 {numberOfData}건</span>
+      </div>
       <Table 
         thead={head} 
         tbody={list}
@@ -131,7 +136,14 @@ const ListPage = () => {
                 />
           }
         </ModalMain>
-        <Pagination />
+        {/* 페이지가 1개밖에 없을 때 페이지 버튼 안보이기 */}
+        {numberOfPages > 1 && <Pagination 
+                      currentPage={currentPage} 
+                      numberOfPages={numberOfPages} 
+                      //onClick={getPosts}    
+                      onClick={onClickPageButton}    
+                  /> 
+              }
     </PageCard>
   );
 };
