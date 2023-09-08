@@ -8,9 +8,18 @@ import java.util.Map;
 public interface ItemService {
     public List<ItemVO> findItems();
 
+    public ItemVO findItembyId(String copyId);
+
+    public int findSubCategory(String value);
+
+    public int addItem(ItemVO item);
+
     public List<ItemVO> findItemBySearch(Map<String, Object> searchCriteria);
 
     public List<MainCategoryVO> findMainCategories();
 
     public List<SubCategoryVO> findSubCategories();
+
+    public SupplierVO findSupplierBySearch(String searchValue);
+
 }

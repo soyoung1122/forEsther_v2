@@ -58,13 +58,13 @@ const SearchPanel = ({
           <div className="col">
             <FormGroup type={'text'}>
               <Label id={`itemName`} value={`품목명`}/>
-              <Input value={item_name} id={`itemName`} type={`text`} placeholder={`품목명을 입력하세요`} onChange={changeItemName}/>
+              <Input value={item_name} id={`itemName`} type={`text`} placeholder={`품목명`} onChange={changeItemName}/>
             </FormGroup>
           </div>
           <div className="col">
             <FormGroup type={'text'}>
               <Label id={`supplierName`} value={`구매처`}/>
-              <Input value={supplier_name} id={`supplierName`} type={`text`} placeholder={`구매처명을 입력하세요`} onChange={changeSupplierName}/>
+              <Input value={supplier_name} id={`supplierName`} type={`text`} placeholder={`구매처명`} onChange={changeSupplierName}/>
             </FormGroup>
           </div>
         </div>

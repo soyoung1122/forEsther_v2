@@ -193,25 +193,10 @@ const ListPage = () => {
           // .modal-backdrop 요소가 존재하는 경우에만 삭제
           document.body.removeChild(backdropElement);
         }
-        history.push(`boms/${res.data.newBomCode}?isNew=true`);
+        history.push(`boms/${res.data.newBomCode}`);
       });
     }
   }
-
-  // const getSearchItemList = () => {
-  //   let arr = [];
-  //   childItemList.map((data, i) => {
-  //     arr.push(data.item_code);
-  //   });
-  //   axios.post(`search/${inputVal}`, {
-  //   }).then((res) => {
-      
-      
-
-  //   });
-
-    
-  // }; 
 
   const tableHead = [
     { 

@@ -54,6 +54,10 @@
         <collection property="subCategory_vo" resultMap="SubCategoryVO" />
     </resultMap>
 
+    <select id="selectItemById" resultType="ItemVO" parameterType="String">
+        SELECT * FROM tbl_items WHERE item_code = #{copyId}
+    </select>
+
     <select id="selectItems" resultMap="ItemVO">
         SELECT DISTINCT
             i.item_code,
@@ -61,6 +65,8 @@
             i.item_name,
             i.item_specification,
             i.safety_stock,
+            i.created_at,
+            i.procurement,
             isu.item_supplier_code,
             su.supplier_name,
             su.supplier_code,
@@ -76,6 +82,7 @@
                  LEFT JOIN tbl_supplier su ON isu.supplier_code = su.supplier_code
                  LEFT JOIN tbl_sub_category sc ON i.sub_category_code = sc.sub_category_code
                  LEFT JOIN tbl_main_category mc ON sc.main_category_code = mc.main_category_code
+        ORDER BY i.created_at DESC
     </select>
 
     <select id="selectItemBySearch" resultMap="ItemVO">
@@ -85,6 +92,7 @@
             i.item_name,
             i.item_specification,
             i.safety_stock,
+            i.created_at,
             isu.item_supplier_code,
             su.supplier_name,
             su.supplier_code,
@@ -117,6 +125,7 @@
                 AND (su.supplier_name LIKE '%' || #{supplier_name} || '%' OR #{supplier_name} IS NULL)
             </if>
         </where>
+        ORDER BY i.created_at DESC
     </select>
     
     <select id="selectMainCategories" resultMap="MainCategoryVO">
@@ -126,6 +135,47 @@
     <select id="selectSubCategories" resultMap="SubCategoryVO">
         SELECT * FROM tbl_sub_category
     </select>
+
+    <select id="selectSupplier" resultType="SupplierVO">
+        SELECT * FROM tbl_supplier WHERE supplier_name LIKE '%' || #{searchValue} || '%'
+    </select>
+
+    <select id="selectSubCategory" resultType="Integer">
+        SELECT sub_category_code FROM tbl_sub_category WHERE sub_category_name = #{value}
+    </select>
+
+    <insert id="insertItem" parameterType="ItemVO">
+        <selectKey keyProperty="item_code"
+                   resultType="java.lang.String" order="BEFORE">
+            SELECT CASE
+            #{item_classification} WHEN '원재료' THEN CONCAT('RM-',
+            LPAD(COALESCE(MAX(SUBSTR(item_code,
+            4))+ 1, 1), 3, '0')) WHEN '제품'
+            THEN CONCAT('P-',
+            LPAD(COALESCE(MAX(SUBSTR(item_code,
+            3)) + 1, 1), 3,
+            '0')) WHEN '상품' THEN CONCAT('M-',
+            LPAD(COALESCE(MAX(SUBSTR(item_code,
+            3)) + 1, 1), 3, '0')) END AS item_code FROM tbl_items WHERE
+            item_classification
+            = #{item_classification}
+        </selectKey>
+        INSERT INTO tbl_items (item_code, item_name, item_specification, sub_category_code,
+        safety_stock, serial_lot_status, procurement, item_classification, created_at)
+        VALUES (#{item_code}, #{item_name}, #{item_specification}, #{sub_category_code}, #{safety_stock}, 1,
+            #{procurement}, #{item_classification}, SYSDATE)
+    </insert>
+
+
+    <insert id="insertItemSupplier" parameterType="ItemVO" useGeneratedKeys="true" keyProperty="item_supplier_code">
+        <selectKey keyProperty="item_supplier_code" resultType="String" order="BEFORE">
+            SELECT 'IS-' || TO_CHAR(CAST(SUBSTR(MAX(item_supplier_code), 4) AS NUMBER) + 1)
+            AS item_supplier_code
+            FROM tbl_item_supplier
+        </selectKey>
+        INSERT INTO tbl_item_supplier (item_supplier_code, item_code, supplier_code)
+        VALUES (#{item_supplier_code}, #{item_code}, #{supplier_code})
+    </insert>
 
 </mapper>
 

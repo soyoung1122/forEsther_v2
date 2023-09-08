@@ -22,8 +22,11 @@ public class BomController {
         return service.getListOrigin();
     }
 
-    @PostMapping("search/{product_name}")
+    @GetMapping("data/search/{product_name}")
     public List<BomVO> bomSearch(@PathVariable String product_name) {
+        product_name = "%" + product_name + "%";
+        System.out.println("==============================");
+        System.out.println(product_name);
         return service.get(product_name);
     }
 

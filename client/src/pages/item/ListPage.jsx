@@ -1,5 +1,5 @@
-import { useState, useEffect, useReducer } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useHistory } from "react-router-dom";
 import axios from "axios";
 
 import PageCard from "../../components/page/PageCard";
@@ -7,13 +7,9 @@ import PageHeader from "../../components/page/PageHeader";
 import PageTitle from "../../components/page/PageTitle";
 import Table from "../../components/table/Table";
 import SearchPanel from "./components/SearchPanel";
-import Button from "../../components/button/Button";
-import ModalMain from "../../components/modal/ModalMain";
-import ModalHeader from "../../components/modal/ModalHeader";
-import ModalBody from "../../components/modal/ModalBody";
-
 
 const ListPage = () => {
+  const history = useHistory();
   const [data, setData] = useState([]);
   const [tableBody, setTableBody] = useState([]);
   const [categoryInfo, setCategoryInfo] = useState({
@@ -58,15 +54,13 @@ const ListPage = () => {
     const dataList = [];
     let supplierList = [];
 
-
-
     for(let i=0; i<data.length; i++) {
       let itemClassification = {
         name: '',
         color: ''
       }
   
-      const {item_code, item_name, item_classification, item_specification, itemSupplier_vo, subCategory_vo  } = data[i];
+      const {item_code, item_name, item_classification, item_specification, itemSupplier_vo, procurement, subCategory_vo, safety_stock  } = data[i];
 
       for(let i=0; i<itemSupplier_vo.length; i++) {
         if(itemSupplier_vo[i].supplier_vo !== null) {
@@ -96,9 +90,11 @@ const ListPage = () => {
         item_code, 
         item_name, 
         item_classificationsss: itemClassification,
-        item_specification, 
         sub_category_name: subCategory_vo[0].sub_category_name,
         main_category_name: subCategory_vo[0].mainCategory_vo.main_category_name,
+        item_specification, 
+        safety_stock,
+        procurement,
         supplier_name: supplierList,
         btn: [
           {
@@ -116,7 +112,12 @@ const ListPage = () => {
           {
             text: "복사", 
             onClick: (e) => {
-              console.log("복사")
+              if(window.confirm('품목을 복사하시겠습니까?')) {
+                history.push(`/items/register?copyId=${e.target.value}`);
+              } else {
+                return;
+              }
+              
             }
           },
         ]
@@ -126,7 +127,6 @@ const ListPage = () => {
       supplierList = []; //리셋
     };
 
-    console.log(dataList)
     setTableBody([...dataList]);
   }, [data])
 
@@ -159,10 +159,6 @@ const ListPage = () => {
       }
     },
     {
-      key: 'item_specification',
-      title: '규격'
-    },
-    {
       key: 'sub_category_name',
       title: '소분류명'
     },
@@ -170,6 +166,20 @@ const ListPage = () => {
       key: 'main_category_name',
       title: '대분류명'
     },
+    {
+      key: 'item_specification',
+      title: '규격'
+    },
+    {
+      key: 'safety_stock',
+      title: '안전재고량'
+    },
+    {
+      key: 'procurement',
+      title: '조달방법'
+    },
+   
+
     {
       key: 'supplier_name',
       title: '구매처명',
@@ -187,8 +197,6 @@ const ListPage = () => {
       }
     }
   ]
-
-
 
   //품목구분 드롭다운 이벤트
   const clickItemClassificationBtn = (e) => {
@@ -255,7 +263,7 @@ const ListPage = () => {
     <PageCard>
       <PageHeader>
         <PageTitle value="품목 조회"/>
-        <div style={{ marginRight: "10px", display: "flex", gap: "8px"}}>
+        <div style={{display: "flex", gap: "8px"}}>
           <Link to="/items/register" className="btn btn-dark">신규 등록</Link>
         </div>
       </PageHeader>

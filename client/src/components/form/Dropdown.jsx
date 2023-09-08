@@ -4,7 +4,7 @@ const Dropdown = ({initValue, list, onClick}) => {
   //initValue  : 초기 값
   //list : 드롭다운 리스트 / 예: [{id: 1, name: :"사과", value: "apple"}, {id: 2, name: "바나나", value: "banana"}]
 
-  return (
+  return ( 
     <div className="dropdown">
       <button className="btn btn-outline-secondary dropdown-toggle w-100" type="button" data-bs-toggle="dropdown" aria-expanded="false">
         {initValue}
