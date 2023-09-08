@@ -139,6 +139,7 @@ const ListPage = () => {
   
       const {item_code, item_name, item_classification, item_specification, itemSupplier_vo, procurement, subCategory_vo, safety_stock  } = data[i];
 
+      console.log(procurement)
       for(let i=0; i<itemSupplier_vo.length; i++) {
         if(itemSupplier_vo[i].supplier_vo !== null) {
           supplierList.push({
@@ -257,8 +258,6 @@ const ListPage = () => {
       key: 'procurement',
       title: '조달방법'
     },
-   
-
     {
       key: 'supplier_name',
       title: '구매처명',
@@ -319,8 +318,24 @@ const ListPage = () => {
   //검색 버튼 이벤트
   const clickSearchBtn = async (e) => {
     e.preventDefault();
-    getData(1);
-    // clickResetBtn(); //초기화
+    console.log(searchData)
+    const newData = {...searchData};
+
+    if(newData.item_classification == '품목구분') {
+      newData.item_classification = '';
+    }
+
+    if(newData.main_category_name == '대분류') {
+      newData.main_category_name = '';
+    }
+
+    if(newData.sub_category_name == '소분류') {
+      newData.sub_category_name = '';
+    }
+
+    const res = await axios.post(`/items/search`, newData);
+    setData(res.data);
+    clickResetBtn(); //초기화
   }
 
   return (
