@@ -10,6 +10,9 @@ public interface ItemMapper {
     //품목 전체 조회
     public List<ItemVO> selectItems();
 
+    //품목 상세 조회
+    public ItemVO selectItemById(String copyId);
+
     //품목 검색
     public List<ItemVO> selectItemBySearch(Map<String, Object> searchCriteria);
     
