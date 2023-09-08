@@ -7,7 +7,6 @@ import SearchInput from "../../components/search/SearchInput";
 import Table from "../../components/table/Table";
 import Dropdwon from "../../components/form/Dropdown";
 import Pagination from "../../components/pagination/Pagination";
-````````````````
 import useUnitprices from "../../hooks/useUnitprices";
 
 import { useState } from "react";
