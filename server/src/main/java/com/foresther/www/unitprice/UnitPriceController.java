@@ -41,6 +41,7 @@ public class UnitPriceController {
     @GetMapping("/{ucode}")
     public UnitPrice get(@PathVariable("ucode") String unit_price_code) {
         log.info("unit price get.....................................");
+
         return service.get(unit_price_code);
     }
 
@@ -48,7 +49,8 @@ public class UnitPriceController {
     getThumbnail(@PathVariable("ucode") String unit_price_code, Model model) {
         log.info("getThumbnail.....................................");
 
-        String path = makepath() + File.separator; String file_name =
+        String path = "C:\\test" + File.separator;
+        String file_name =
                 service.getThumbnail(unit_price_code);
 
 
@@ -86,10 +88,10 @@ public class UnitPriceController {
     }
 
     @GetMapping(value = "/{ucode}/download", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    public ResponseEntity<Resource> downloadFile(@PathVariable("ucode") String unit_price_code) {
+    public ResponseEntity<byte[]> downloadFile(@PathVariable("ucode") String unit_price_code) throws IOException {
         log.info("================================download file===========================================");
 
-        String path = makepath() + File.separator;
+        String path = "C:\\test" + File.separator;
 
         log.info(unit_price_code);
         String file_name = service.getThumbnail(unit_price_code);
@@ -111,10 +113,15 @@ public class UnitPriceController {
             throw new RuntimeException(e);
         }
 
-        return new ResponseEntity<Resource>((Resource) resource, headers, HttpStatus.OK);
-    }
+        byte[] fileBytes = Files.readAllBytes(resource.getFile().toPath());
 
-    @GetMapping("/{icode}/getChart")
+        return ResponseEntity.ok()
+                .headers(headers)
+                .contentLength(fileBytes.length)
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(fileBytes);
+    }
+    @GetMapping("/{icode}/chart")
     public Map<String, Object> getChart(@PathVariable("icode") String item_code) {
         log.info("getChart=========================================");
 
@@ -152,7 +159,7 @@ public class UnitPriceController {
             file.setFile_path(path);
 
             if (service.registerWithFile(unitPrice, file) == 0) {
-                //log.info(saveFile.delete());
+                log.info(saveFile.delete());
             } else {
                 log.info(file);
             }
