@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Button from "../../../components/form/Button";
 import Dropdown from "../../../components/form/Dropdown";
 import Form from "../../../components/form/Form";
@@ -19,6 +19,8 @@ const RegisterPanel = ({
   const { item_name, item_classification, procurement, sub_category_code, sub_category_name, item_specification, safety_stock, supplier_name } = data;
   const { subCategory } = categoryInfo;
 
+  const [isDisabledAddBtn, setIsDisabledAddBtn] = useState(true); //추가버튼 활성화 유무
+  const [isDisabledSearchBtn, setIsDisabledSearchBtn] = useState(true); //구매처 검색버튼 활성화 유무
   const [specification, setSpecification] = useState({ value: '', unit: '단위'});
   const [supplier, setSupplier] = useState({
     contactPerson: '',
@@ -66,6 +68,40 @@ const RegisterPanel = ({
       value: 'l'
     },
   ]
+
+  //추가버튼 비활성화 관련 기능
+  useEffect(()=> {
+    //구매처명 검색버튼 활성화 유무 처리
+    if(item_classification == '품목구분' || item_classification == '제품') {
+      setIsDisabledSearchBtn(true);
+    } else {
+      setIsDisabledSearchBtn(false);
+    }
+
+    //form 데이터 값이 초기값인지 아닌지에 따라 
+    //추가버튼 활성화 유무 처리
+    if(item_name != '' && item_classification != '품목구분' && sub_category_name != '소분류' 
+      && procurement != '조달방법' && safety_stock != '') {
+      setIsDisabledAddBtn(false);
+    } else {
+      setIsDisabledAddBtn(true);
+    }
+  }, [data])
+
+  //품목 복사 시 필요한 기능
+  useEffect(()=> {
+    if(item_specification == '') return;
+    const spec = item_specification.split(/([a-zA-Z]+)/);
+    setSpecification({value: spec[0], unit: spec[1]});
+  }, [item_specification])
+
+  useEffect(()=> {
+    if(subCategory.length == 0) return;
+    const categoryName = subCategory.filter(item => item.value == sub_category_code);
+    if(categoryName.length == 0) return;
+    setData({...data, sub_category_name: categoryName[0].name});
+
+  }, [sub_category_code])
 
   //품목명 이벤트
   const changeItemName = (e) => {
@@ -159,7 +195,7 @@ const RegisterPanel = ({
           </div>
           <div className="col">
             <Label id={`itemSafe`} value={`구매처명`}/>
-            <SearchInput onSubmit={searchSupplierName}/>
+            <SearchInput onSubmit={searchSupplierName} disabled={isDisabledSearchBtn}/>
           </div>
           <div className="col">
             <FormGroup type={'text'}>
@@ -183,7 +219,7 @@ const RegisterPanel = ({
 
         <div className="row justify-content-center" style={{ marginTop: "40px"}}>
           <div style={{width: "300px"}}>
-            <Button type={`submit`} value={`추가`} className={`btn-dark`} onClick={submitForm}/>
+            <Button type={`submit`} value={`추가`} className={`btn-dark`} onClick={submitForm} disabled={isDisabledAddBtn}/>
           </div>
         </div>
       </Form>

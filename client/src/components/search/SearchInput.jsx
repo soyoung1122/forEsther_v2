@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-const SearchInput = ({onSubmit}) => {
+const SearchInput = ({onSubmit, disabled}) => {
   const [inputVal, setInputVal] = useState("");
   const styleSheet = {
     marginBottom: "10px",
@@ -19,6 +19,7 @@ const SearchInput = ({onSubmit}) => {
         aria-describedby="basic-addon-search31"
         onChange={(e) => {setInputVal(e.target.value)}}
         value={inputVal}
+        disabled={disabled}
       />
       <button 
         type="submit" 
@@ -27,6 +28,7 @@ const SearchInput = ({onSubmit}) => {
           e.preventDefault();
           onSubmit(inputVal);
         }}
+        style={{ cursor: `${disabled ? 'not-allowed' : 'pointer'}` }}
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"

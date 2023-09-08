@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import axios from "axios";
 
 import PageCard from "../../components/page/PageCard";
@@ -9,6 +9,7 @@ import Table from "../../components/table/Table";
 import SearchPanel from "./components/SearchPanel";
 
 const ListPage = () => {
+  const history = useHistory();
   const [data, setData] = useState([]);
   const [tableBody, setTableBody] = useState([]);
   const [categoryInfo, setCategoryInfo] = useState({
@@ -59,7 +60,7 @@ const ListPage = () => {
         color: ''
       }
   
-      const {item_code, item_name, item_classification, item_specification, itemSupplier_vo, subCategory_vo  } = data[i];
+      const {item_code, item_name, item_classification, item_specification, itemSupplier_vo, procurement, subCategory_vo, safety_stock  } = data[i];
 
       for(let i=0; i<itemSupplier_vo.length; i++) {
         if(itemSupplier_vo[i].supplier_vo !== null) {
@@ -89,9 +90,11 @@ const ListPage = () => {
         item_code, 
         item_name, 
         item_classificationsss: itemClassification,
-        item_specification, 
         sub_category_name: subCategory_vo[0].sub_category_name,
         main_category_name: subCategory_vo[0].mainCategory_vo.main_category_name,
+        item_specification, 
+        safety_stock,
+        procurement,
         supplier_name: supplierList,
         btn: [
           {
@@ -109,7 +112,12 @@ const ListPage = () => {
           {
             text: "복사", 
             onClick: (e) => {
-              console.log("복사")
+              if(window.confirm('품목을 복사하시겠습니까?')) {
+                history.push(`/items/register?copyId=${e.target.value}`);
+              } else {
+                return;
+              }
+              
             }
           },
         ]
@@ -151,10 +159,6 @@ const ListPage = () => {
       }
     },
     {
-      key: 'item_specification',
-      title: '규격'
-    },
-    {
       key: 'sub_category_name',
       title: '소분류명'
     },
@@ -162,6 +166,20 @@ const ListPage = () => {
       key: 'main_category_name',
       title: '대분류명'
     },
+    {
+      key: 'item_specification',
+      title: '규격'
+    },
+    {
+      key: 'safety_stock',
+      title: '안전재고량'
+    },
+    {
+      key: 'procurement',
+      title: '조달방법'
+    },
+   
+
     {
       key: 'supplier_name',
       title: '구매처명',

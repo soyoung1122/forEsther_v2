@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import { Link, useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import { Link, useHistory, useLocation } from "react-router-dom/cjs/react-router-dom.min";
 import axios from "axios";
 
 import readExcel from '../../utils/readExcel';
+import downloadExcel from "../../utils/downloadExcel";
 
 import PageCard from "../../components/page/PageCard";
 import PageHeader from "../../components/page/PageHeader";
@@ -18,6 +19,9 @@ import ModalBody from "../../components/modal/ModalBody";
 
 const RegisterPage = () => {
   const history = useHistory();
+  const location = useLocation();
+  const copyId = location.search.split('=')[1];
+
   //form 데이터
   const [data, setData] =useState({
     item_name: '',
@@ -107,6 +111,19 @@ const RegisterPage = () => {
     getCategory();
   }, [])
 
+  //품목 복사 페이지 첫 로드 시
+  useEffect(() => {
+    if(copyId === undefined) return;
+    const getCopyItem = async () => {
+      const res = await axios.get(`/items/register/${copyId}`);
+      console.log(res.data);
+      //form 데이터 업데이트
+      setData({...data, ...res.data})
+    }
+
+    getCopyItem();
+  }, [])
+
   //엑셀 가져오기 버튼 이벤트
   const handleExcelFileChange = async (e) => {
     if (!e.target.files) return;
@@ -171,7 +188,7 @@ const RegisterPage = () => {
       <hr/>
 
       <div style={{marginBottom: "10px", display: "flex", justifyContent: "space-between"}}>
-        <span style={{ display: "flex", alignItems: "end", fontWeight: 'bold'}}>총 {20}건</span>
+        <span style={{ display: "flex", alignItems: "end", fontWeight: 'bold'}}>총 {tableBody.length}건</span>
         <Button dataBsToggle={"modal"} dataBsTarget={"#basicModal"} buttonName="엑셀 업로드" buttonClass="btn-secondary" onClick={()=> setIsModalOpen(true)}/>
       </div>
       <Table thead={tableHead} tbody={tableBody == undefined? [] : tableBody}/>
@@ -182,7 +199,7 @@ const RegisterPage = () => {
           </ModalHeader>
           <ModalBody>
             <div style={{ display: "flex", flexDirection: "column", rowGap: "10px"}}>
-              <Button buttonClass={"btn-secondary w-100"} buttonName={"엑셀 양식 다운로드"} />
+              <Button buttonClass={"btn-secondary w-100"} buttonName={"엑셀 양식 다운로드"} onClick={downloadExcel}/>
               <label className="btn btn-secondary" htmlFor="inputGroupFile04">엑셀 가져오기</label>
               <input type="file" className="form-control" id="inputGroupFile04" aria-describedby="inputGroupFileAddon04" aria-label="Upload"
                 onChange={handleExcelFileChange} style={{display: 'none'}}/>
