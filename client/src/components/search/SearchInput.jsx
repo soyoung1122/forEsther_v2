@@ -21,7 +21,7 @@ const SearchInput = ({onSubmit, disabled}) => {
         value={inputVal}
         disabled={disabled}
       />
-      <button 
+       <button 
         type="submit" 
         className="btn btn-secondary search-btn"
         onClick={(e) => {

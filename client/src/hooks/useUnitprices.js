@@ -1,21 +1,62 @@
 import { useEffect, useState } from "react";
 import axios from "../utils/axios";
 
-const useUnitprices = ({changeModal}) => {
+const useUnitprices = ({changeModal, setDetail, setChartData}) => {
   const [list, setList] = useState([]);
   
-  const onSLClick = async (e) => {
+  const onSLClick = (e) => {
     e.preventDefault();
-    const res = await axios(e.target.getAttribute("href"));
-    changeModal("detail");
-  }
+    axios.get(e.target.getAttribute("href"))
+      .then((res) => {
+        axios.get(e.target.getAttribute("href") + "/thumbnail")
+          .then((file) => {
+            setDetail(res.data, file);
+          })
+        });
+        changeModal("detail");
+      }
+  
+      const onIClick = async (e) => {
+        e.preventDefault();
+        try {
+          const response = await fetch(e.target.getAttribute("href")+"/chart");
+          if (!response.ok) {
+            throw new Error('데이터를 불러오는 데 실패했습니다.');
+          }
+          const data = await response.json();
+  
+          // 데이터 처리
+          const labels = [];
+          const datas = [];
+          let min, max = data.result[0].MON_AVG;
+  
+          data.result.forEach((element) => {
+            labels.push(element.MONTH + '월');
+            datas.push(element.MON_AVG);
+          });
+  
+          const op = {
+            min: min,
+            max: max,
+            iname: "고춧가루",
+          };
 
-  const onIClick = async (e) => {
-    e.preventDefault();
-    const res = await axios(e.target.getAttribute("href")+"chart");
-    changeModal("chart");
-  }
-
+          setChartData({
+            labels: labels,
+            datasets: [
+              {
+                label: op.iname,
+                data: datas,
+                borderColor: '#1565C0',
+                backgroundColor: '#1A7FF2',
+              },
+            ],
+          });
+          changeModal("chart");
+        } catch (error) {
+          console.error(error);
+        }
+      }
 
   const head = [
     {
@@ -32,7 +73,7 @@ const useUnitprices = ({changeModal}) => {
       data: {
         link: {
           origin: "unitprices",
-          id: "item_code"
+          id: "unit_price_code"
         },
         onClick: onSLClick,
       },
@@ -76,7 +117,7 @@ const useUnitprices = ({changeModal}) => {
       key: "btn",
       title: " ",
       data: {
-        btnVal : "item_code"
+        btnVal : "unit_price_code"
       }
     }
   ];
@@ -166,7 +207,7 @@ const useUnitprices = ({changeModal}) => {
     //selectedVal,
     deleteUnitprice,
     updateUnitprice,
-    //onLabelClick
+    onIClick
   };
 };
 
