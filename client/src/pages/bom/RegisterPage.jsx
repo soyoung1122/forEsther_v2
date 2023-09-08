@@ -6,289 +6,345 @@ import PageTitle from "../../components/page/PageTitle";
 import Table from "../../components/table/Table";
 import Pagination from "../../components/pagination/Pagination";
 import Button from "../../components/button/Button";
-import ModalMain from "../../components/modal/ModalMain";
-import ModalHeader from "../../components/modal/ModalHeader";
-import ModalBody from "../../components/modal/ModalBody";
-import ModalFooter from "../../components/modal/ModalFooter";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { useLocation } from "react-router-dom/cjs/react-router-dom.min";
+import { useParams } from "react-router-dom/cjs/react-router-dom.min";
 import SearchInput from "../../components/search/SearchInput";
 import Dropdown from "../../components/form/Dropdown";
 import Input from "../../components/form/Input";
+import '../../styles/common/BomRegister.css'
 
-const ListPage = () => {
-  const [data, setData] = useState([]);
-  const [tableBody, setTableBody] = useState([]);
+const RegisterPage = () => {
+  const {bom_code} = useParams();
+  const {isNew} = useParams();
+  const [bom, setBom] = useState();
+  const [childItemList, setChildItemList] = useState([]);
+  const [itemList, setItemList] = useState([]);
+  const [productName, setProductName] = useState('');
+  const [searchItemName, setSearchItemName] = useState('');
+  // const [data, setData] = useState([]);
+  // const [tableBody, setTableBody] = useState([]);
   const history = useHistory();
-
-  //현재페이지를 url에 저장하기 위해
-  const location = useLocation();
-  const params = new URLSearchParams(location.search);
-  const pageParam = params.get('page');
-
-  //현재 페이지 
-  const [currentPage, setCurrentPage] = useState(1);
-  //총 포스트 수
-  const [numberOfData, setNumberOfData] = useState(0);
-  //총 페이지 수
-  const [numberOfPages, setNumberOfPages] = useState(0);
-  //한 페이지에 몇개씩 글이 보일 것인지
-  const limit = 5;
-  //현재 페이지의 인덱스 시작 숫자
-  const [startIndex, setStartIndex] = useState(1);
-
+  // const [temp, setTemp] = useState();
+  
   useEffect(() => {
-    //무조건 반올림 => 5개씩 출력 될때 14개면 3페이지가 출력 되어야 함
-    setNumberOfPages(Math.ceil(numberOfData/limit));
-  }, [numberOfData]);
-  //글갯수에 따라 페이지 수가 변경되기 때문에 의존성 배열에 포스트 수를 넣음
-
-  //뒤로가기 했을 때 이전 페이지로 돌아가는게 아닌 다른페이지로 이동하는 문제 해결을 위해
-  const onClickPageButton = (page) => {
-    // history.push(`/admin?page=${page}`);
-    //Blogs에서 다른 페이지 이동할 때 Admin의 페이지로 이동하는거 해결하기
-    history.push(`${location.pathname}?page=${page}`);
-    getData(page);
-
-    //페이지 버튼 눌러도 색이 안바뀌어서 넣어 줌
-    setCurrentPage(page);
-  }
-  const getData = (page = 1) => {
+      getData();
+      console.log(bom_code);
+    }, []);
     
-    axios.get(`boms/data`, {
     
+
+  const getData = () => {
+    axios.get(`register/data/${bom_code}`, {
+      
     }).then((res) => {
-        //총 글 갯수
-        // setNumberOfData(res.headers['x-total-count']);
-        setNumberOfData(res.data.length);
-        //서버로 부터 넘어온 값은 파라미터로 가져옴 res
-        const offset = (page-1)*limit;
-        setStartIndex(offset+1);
-        const sliceData = () => {
-          if(res.data){
-            let result = res.data.slice(offset, offset + limit);
-            return result;
-          }
-        }
-        
-        setData(sliceData());
-        
+      // console.log(res.data.bom_register_vo);
+      setItemList(res.data.item_list);
+      let arr = [];
+      if(res.data.bom.bom_register_vo !== null) {
+        res.data.bom.bom_register_vo.map((data, i) => {
+          data.item_vo.item_code = data.item_code;
+          arr.push(data);
+        });
+      }
+      setBom(res.data.bom);
+      setProductName(res.data.bom.product_name);
+      setChildItemList(arr);
+      // console.log(bom);
+      // console.log(itemList);
     });
     
   };
 
-  useEffect(() => {
-      //넘어온 페이지 값으로 currentPage 값 적용
-      setCurrentPage(parseInt(pageParam) || 1);
+  const removeItem = (data) => {
+    data.item_vo.item_code = data.item_code;
+    let arr = [data.item_vo];
+    setChildItemList(prevData => prevData.filter(item => item.item_code !== data.item_code));
+    // arr = [...arr, itemList];
 
-      //함수 호출해서 불러오기
-      //리렌더링을 통해 현재 페이지 출력
-      //pageParam은 string이기 때문에 int로 캐스팅을 해줘야 함
-      //페이지 번호가 없다면 default로 1
-      getData(parseInt(pageParam) || 1);
-
-  //}, [pageParam, getPosts]);
-  }, []);
-
-  const btn = [
-    {
-      text: "수정", 
-      onClick: (e) => {
-        console.log("수정")
-        console.log(e)
-      }
-    },
-    {
-      text: "삭제", 
-      onClick: (e) => {
-        axios.delete(`boms/${e.target.value}`).then(() => {
-          setData(prevData => prevData.filter(data => data.bom_code !== e.target.value));
-          
-          // addToast({
-          //     text: "Successfully delete",
-          //     type: "success"
-          // });
-      });
-      }
-    },
-  ];
-
-  const onLabelClick = (e) => {
-    console.log(e);
+    setItemList([...arr,...itemList]);
+    console.log(childItemList);
+    console.log(itemList);
   }
 
-  //테이블 데이터 가공
-  useEffect(()=> {
-    const arr = [];
-    let itemList = [];
-    for(let i=0; i<data.length; i++) {
-      const {bom_code, product_name, bom_register_vo } = data[i];
-
-      for(let j = 0; j < bom_register_vo.length; j++) {
-        if(bom_register_vo[j].item_vo !== null){
-          itemList.push({name: bom_register_vo[j].item_vo.item_name});
-        }
-      }
-      const item_code = bom_code.substr(2, 5);
-      const no = startIndex + i;
-      const newData = {bom_code, product_name, item_code, item_name: itemList, btn, no};
-      arr.push(newData);
-      itemList = [];
-
-    };
-    setTableBody([...arr]);
-  }, [data])
- 
-  const tableHead = [
-    { 
-      key: 'no',
-      title: '#'
-    },
-    { 
-      key: 'bom_code',
-      title: 'BOM코드',
-      data: {
-        link: {
-          origin: "/boms",
-          id: "bom_code"
-        }
-      },
-      isToggle: true
-    },
-    { 
-      key: 'item_code',
-      title: '모품목코드'
-    },
-    { 
-      key: 'product_name',
-      title: '모품목명'
-    },
-    {
-      key: 'item_name',
-      title: '구성품목',
-      isArray: true,
-      data: {
-        key: "name"
-      }
-    },
-    {
-      key: 'btn',
-      title: '',
-      data: {
-        btnVal: 'bom_code'
-      }
+  const addItem = (data) => {
+    const temp = {
+      bom_registration_code: '',
+      bom_code: childItemList[0].bom_code,
+      item_code: data.item_code,
+      item_vo: data,
+      required_quantity: 0,
     }
-  ]
+    let arr = [temp];
+    // let arr2 = [...arr, ...childItemList];
+    // console.log(childItemList);
+    arr = [...arr, ...childItemList];
+    console.log(arr);
+    setItemList(prevData => prevData.filter(item => item.item_code !== data.item_code));
+    setChildItemList(arr);
+  }
 
+  const handleQuantityChange = (index, value) => {
+    // childItemList에서 해당 데이터를 복제하고 값을 업데이트합니다.
+    const updatedData = [...childItemList];
+    updatedData[index].required_quantity = value;
+    
+    // 업데이트된 데이터로 상태를 업데이트합니다.
+    setChildItemList(updatedData);
+  };
+
+  const onSearchItem = (e) => {
+    //Enter가 눌렸을 때 함수가 호출
+    if(e.key == 'Enter'){
+      getSearchItemList();
+    }
+  }
+  
+  
+  const getSearchItemList = () => {
+    let arr = [];
+    childItemList.map((data, i) => {
+      arr.push(data.item_code);
+    });
+    axios.post(`register/search`, {
+      ItemCodeArr: arr,
+      itemName: searchItemName,
+    }).then((res) => {
+      
+      setItemList(res.data.items);
+
+    });
+
+    
+  }; 
   
 
 
-  const cthead = [
-    {
-      key: "no",
-      title: "#",
-      data: {
-        class: [""],
-      },
-    },
-    {
-      key: "child_item_code", //필수
-      title: "자품목 코드", //필수
-    },
-    {
-      key: "child_item_name",
-      title: "자품목명",
-    },
-    {
-      key: "required_quantity",
-      title: "필요수량",
-    }]
+  const registerBom = () => {
+    const rowDataList = [];
+    if(childItemList.length > 0) {
+      childItemList.map((data, i) => {
+        
+        if(data.required_quantity !== 0) {
+          let item = {
+            bomCode: data.bom_code,
+            itemCode: data.item_code,
+            itemName: data.item_vo.item_name,
+            itemRequiredQuantity: data.required_quantity
+          }
+          rowDataList.push(item);
+        } 
+        
+        
+      }); 
+    } else {
+      let item = {
+        bomCode: bom_code,
+        itemCode: "null",
+        itemName: "null",
+        itemRequiredQuantity: "null"
+      }
+      rowDataList.push(item);
+    }
+    console.log(rowDataList);
+    axios.post(`modify`, rowDataList).then(() => {
+      history.push('/boms');
+    });
+  }
 
-    const searchLabel = [
-      {
-        "name" : "품목명",
-        "value" : "N"
-      },
-      {
-        "name" : "품목코드",
-        "value" : "C"
-      },
-    ];
+
 
   return (
     <PageCard>
       <PageHeader>
-        <PageTitle value="BOM관리"/>
-        <Button buttonClass={"btn-dark"} dataBsToggle={"modal"} dataBsTarget={"#basicModal"} buttonName="신규등록" />
-      </PageHeader>
-      <div style={{
-        display: "flex",
-        justifyContent: "flex-end"
-      }}>
-        <div style={{
-          marginRight: "5px",
-          width: "130px"
-        }}>
-          <Dropdown
-            initValue={"품목명"}
-            list={searchLabel}
-            onCLick={onLabelClick}
-            
+        <PageTitle value="BOM상세정보"/>
+        <div>
+          <Button 
+            buttonClass={"btn btn-outline-dark"} 
+            buttonName="취소" 
+            onClick={() => {
+              history.push('/boms')
+            }}  
+          />
+          <Button 
+            buttonClass={"btn-dark"} 
+            buttonName="BOM 등록" 
+            onClick={registerBom}
           />
         </div>
-        <div>
-          <SearchInput />
-        </div>
-      </div>
-      <ModalMain>
-        <ModalHeader>
-        <h5 className="modal-title" id="exampleModalLabel1">BOM 신규 작성</h5>
-        </ModalHeader>
-        <ModalBody>
-          <div className="row g-2">
-            <div className="col mb-0">
-              <div className="input-group input-group-merge">
-                <span className="input-group-text" id="basic-addon-search31"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
-  <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
-</svg></span>
-                <Input placeholder={"품목명 검색..."} />
+      </PageHeader>
+
+                          
+      <div className="bigbox">
+        <div className="smallbox-1">
+          <ul>
+            <li><h3>BOM 코드 : {bom_code}</h3></li>
+            <li><h3>모품목 코드 : {bom_code.substr(2, 5)}</h3></li>
+            <li><h3>모품명 : {bom && productName}</h3></li>
+          </ul>
+						
+					<br/>
+          {/* <!-- Vertical Scrollbar --> */}
+          <h4 className="text-primary">자품목 리스트</h4>
+          <div className="test-ui-bg scroll-list">
+            <div className="col-md-6 col-sm-12 div-table">
+              <div className="card overflow-hidden mb-4 div-scroll-list-1">
+                <div className="card-body overflow-auto">
+                    
+                    {/* <!-- Table UI --> */}
+                 <div className="table-responsive text-nowrap">
+                    <table className="table table-bordered item-table table-1">
+                      <thead>
+                        <tr>
+                          <th>순번</th>
+                          <th>품목코드</th>
+                          <th>품목명</th>
+                          <th>규격</th>
+                          <th>필요수량</th>     
+                          <th></th>                             
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {childItemList &&
+                          childItemList.map((data, i) => {
+                            return (
+                              <tr>
+                                <td>{i+1}</td>
+                                <td className="td-box">
+                                  <a className="item-code move" href={data.item_code}>{data.item_code}</a>
+                                </td>
+                                <td className="item-name">{data.item_vo.item_name}</td>
+                                <td>{data.item_vo.item_specification}</td>
+                                <td>
+                                  <input 
+                                    className="item-required-quantity" 
+                                    type="text" 
+                                    value={data.required_quantity} 
+                                    onChange={(e) => handleQuantityChange(i, e.target.value)}
+                                    // onKeyUp={onSearchItem}
+                                  />
+                                </td>
+                                <td className="td-btn">
+                                  <button 
+                                    type="button" 
+                                    className="btn rounded-circle btn-icon"
+                                    onClick={() => removeItem(data)}
+                                  >
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="45" height="45" fill="#ff3e1d" className="bi bi-dash-circle-fill" viewBox="0 0 16 16">
+                                      <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM4.5 7.5a.5.5 0 0 0 0 1h7a.5.5 0 0 0 0-1h-7z"/>
+                                    </svg>
+
+                                  </button> 
+                                </td>
+                              </tr>
+
+                            )                     
+                          })
+                        }
+
+                      </tbody>
+                    </table>
+			            </div>
+                  {/* <!--/ Table UI --> */}
+                </div>
               </div>
-              <br/>
-              <label htmlFor="item_name" className="form-label">모품목 선택</label>
-              <select className="form-select" id="item_name" aria-label="모품목을 선택해 주세요">
- 
-              </select>
             </div>
           </div>
-          <br/>
-          <div className="row g-2">
-            <div className="col mb-0">
-              <label htmlFor="product_name" className="form-label">제품명</label>
-              <input type="text" id="product_name" className="form-control" placeholder="BOM 등록할 제품명을 등록하세요." />
+        {/* <!-- / Vertical Scrollbar --> */}
+        </div>
+        <div className="smallbox-2">
+          {/* <!-- Vertical Scrollbar --> */}
+          <div className="test-ui-bg scroll-list">
+            <div className="col-md-6 col-sm-12 div-table">                       
+              <h4 className="text-primary">자품목 추가</h4>
+              <div className="table-filter">  
+                <div className="search-combo">
+                  <div className="input-group input-group-merge search-combo-input">
+                    <span className="input-group-text" id="basic-addon-search31">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-search" viewBox="0 0 16 16">
+                        <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+                      </svg>
+                    </span>
+                    <input 
+                      type="text" 
+                      className="form-control" 
+                      id="item_name_input"  
+                      placeholder="품목명 검색..." 
+                      aria-label="Search..." 
+                      aria-describedby="basic-addon-search31"
+                      onChange={(e) => {setSearchItemName(e.target.value)}}
+                      onKeyUp={onSearchItem}
+                    />
+                  </div>
+                </div>
+                {/* <!-- / Search UI --> */}
+              </div>
+              <hr/>
+              <div className="card overflow-hidden mb-4 div-scroll-list-2">
+                <div className="card-body overflow-auto">
+                                   
+                  {/* <!-- Table UI --> */}
+                  <div className="table-responsive text-nowrap">
+                  
+                  
+                    <table className="table table-bordered item-table table-2">
+                      <thead>
+                        <tr>
+                          <th>순번</th>
+                          <th>품목코드</th>
+                          <th>품목명</th>
+                          <th>규격</th>
+                          <th></th>                                  
+                        </tr>
+                      </thead>
+                      <tbody>
+                        { itemList &&
+
+                          itemList.map((data, i) => {
+                            return (
+                              <tr>
+                                <td>{i+1}</td>
+                                <td className="td-box">
+                                  <a className="move" href={data.item_code}>{data.item_code}</a>
+                                </td>
+                                <td>{data.item_name}</td>
+                                <td>{data.item_specification}</td>
+                                <td className="td-btn">
+                                  <button 
+                                    type="button" 
+                                    className="btn rounded-circle"
+                                    onClick={() => addItem(data)}
+                                  >
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="45" height="45" fill="#03c3ec" className="bi bi-plus-circle-fill" viewBox="0 0 16 16">
+                                      <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3v-3z"/>
+                                    </svg>
+                                  </button> 
+                                </td>
+                              </tr>
+                            );
+                          })
+                          
+
+                        }
+                      
+                      </tbody>
+                    </table>
+                  </div>
+                  {/* <!--/ Table UI --> */}
+                </div>
+              </div>
             </div>
           </div>
-        </ModalBody>
-        <ModalFooter>
-          <Button buttonClass={"btn-label-secondary"} dataBsDismiss={"modal"} buttonName={"취소"} />
-          <Button ButtonId={"btnRegister"} buttonName={"BOM 등록"} />
-        </ModalFooter>
-      </ModalMain>
-      <Table 
-        thead={tableHead} 
-        tbody={tableBody}
-        isChild={true}
-        cthead={cthead}  
-      />
-      {/* 페이지가 1개밖에 없을 때 페이지 버튼 안보이기 */}
-      {numberOfPages > 1 && <Pagination 
-                    currentPage={currentPage} 
-                    numberOfPages={numberOfPages} 
-                    //onClick={getPosts}    
-                    onClick={onClickPageButton}    
-                /> 
-            }
+        {/* <!-- / Vertical Scrollbar --> */}
+        </div>
+                          	
+                          
+                          
+      </div>
+
+      
     </PageCard>
   )
 }
 
-export default ListPage;
+export default RegisterPage;
